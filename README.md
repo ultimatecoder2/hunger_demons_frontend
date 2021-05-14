@@ -1,4 +1,4 @@
-# Feed needy app
+# Hunger Demons app
 This app focusses on connecting the local communities and organizations for food related needs. Its main motive is cure the menace of hunger by distrubuting food among all sections of society.
 
 ## Technological stack used
