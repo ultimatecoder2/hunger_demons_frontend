@@ -55,11 +55,14 @@
     margin: 0 auto 3rem auto;
   }
   .section__header {
-    font-size: 3.5rem;
+    font-size: 3rem;
     color: var(--color-primary);
-    text-align: center;
-    line-height: 1.3;
+    text-align: left;
+    line-height: 1.2;
     font-weight: 400;
+  }
+  .section__header--center {
+    text-align: center;
   }
   
   @media screen and (max-width: 350px){
