@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import { Container, Card, CardDeck, Row, Col, Image } from 'react-bootstrap'
 import {Link} from 'react-router-dom';
 import Header from '../header/form__header'
-import DeliveryMan from '../Images/DeliveryMan.jpg';
+import FoodDonation from '../../styles/img/food_donation_sized.png'
 import  FoodDrive from '../Images/FoodDrive.jpg';
 import  NeedFood from '../Images/HungryWoman.jpg';
 import SaveEarth from '../../styles/img/save_world.jpg';
 import WasteFood from '../../styles/img/food_trash.jpg';
 import HelpHand from '../../styles/img/helping_hand.jpg';
 import HandShakeIcon from '../../styles/img/hand_shake_icon.jpg';
+import OrganizationWorker from '../../styles/img/organization_worker_sized.jpg'
 import './contribute.css'
 export default class contribute extends Component {
     render() {
@@ -73,17 +74,7 @@ export default class contribute extends Component {
                         </div>
                     </div>
                     
-                    <div className="new__section">
-                        <div className="section__title">
-                            <h3 className="section__header">
-                                Steps to Contribute
-                            </h3>
-                        </div>
-                        <div className="section__content">
-                            loremipsum10 Irure ipsum est culpa consectetur ut aliquip occaecat occaecat consectetur eu pariatur anim.
-                        </div>
 
-                    </div>
                     <section className="new__section" id="contribute__section">
                 
                     <div className="section__title">
@@ -99,30 +90,16 @@ export default class contribute extends Component {
                         
                         <CardDeck>
                             <Card className="contribute__card">
-                                <Card.Img className="contribute__card--img" variant="top" src={FoodDrive} fluid="true"/>
+                                <Card.Img className="contribute__card__img" variant="top" src={FoodDonation} fluid="true"/>
                                 <Card.Body>
-                                    <Card.Title>Provide Food</Card.Title>
+                                    <Card.Title>Donate Food</Card.Title>
                                     <Card.Text>
-                                        You can provide any kind of excess food. Whether food left from a birthday party or a marriage, you can contact us. One person will collect it from you and deliever to the unprivileged people.
+                                        You can help others by donating untouched excess food. 
+                                        One of the representative from a food organization will collect it from you and distribute it among needy people.
                                     </Card.Text>
                                 </Card.Body>
-                                <Card.Footer>
-                                    <Link to="/donate" className ="btn contribute__card__btn">Provide Food &#8594;</Link>
-                                </Card.Footer>
-                            </Card>
-
-                            <Card className="contribute__card">
-                                <Card.Img className="contribute__card__img" variant="top" src={DeliveryMan} fluid="true"/>
-                                <Card.Body>
-                                    <Card.Title>Distribute Food</Card.Title>
-                                    <Card.Text>
-                                        Whether on a ride to home, market or office, you can pick up food from one of the nearby location and deliver to the nearest needy people.
-                                        This would be a great contribution towards feeding needy.
-                                        
-                                    </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                    <Link to="/donate_requests" className ="btn contribute__card__btn">Distribute Food &#8594;</Link>
+                                <Card.Footer className="contribute__card__footer">
+                                    <Link to="/donate" className ="btn contribute__card__btn">Donate Food &#8594;</Link>
                                 </Card.Footer>
                             </Card>
                             
@@ -132,23 +109,55 @@ export default class contribute extends Component {
                                     <Card.Title>Need Food</Card.Title>
                                     
                                     <Card.Text>
-                                        If you don't have enough food then you can register a request to us. We will try our best to provide you food as soon as possible. 
+                                        If you are in need of food, then register a request to us. We will soon arrange food for you. We will help you in the best possible way. 
                                     </Card.Text>
                                 </Card.Body>
-                                <Card.Footer>
+                                <Card.Footer className="contribute__card__footer">
                                     <Link to="/getFood" className ="btn contribute__card__btn">Get food &#8594;</Link>
+                                </Card.Footer>
+                            </Card>
+                            
+                            <Card className="contribute__card">
+                                <Card.Img className="contribute__card__img" variant="top" src={OrganizationWorker} fluid="true"/>
+                                <Card.Body>
+                                    <Card.Title>Part of an Organization? </Card.Title>
+                                    <Card.Text>
+                                        You can help in collecting food from food donors and distribute it among needy people. 
+                                        For seeing donation requests, please <Link to="/donate_requests">Click here</Link>.
+                                        Food requests posted by needy people can be <Link to="/need_requests">viewed here</Link>. 
+                                        Please feel free to post need food requests, on behalf of someone who need food.
+                                    </Card.Text>
+                                </Card.Body>
+                                <Card.Footer className="contribute__card__footer">
+                                    <Link to="/donate_requests" className ="btn contribute__card__btn">Donation Requests &#8594;</Link>
                                 </Card.Footer>
                             </Card>
                         </CardDeck>
                     </div>
             
-            </section>
+                </section>
+
+                <div className="new__section">
+                    <div className="section__title">
+                        <h3 className="section__header">
+                            Steps to Contribute
+                        </h3>
+                    </div>
+                    <div className="section__content">
+                        <div className="styled__list">
+                            <ol class="gradient__list">
+                                <li><Link to="/login" className="styled__list__links">Login</Link> to your Hunger Demons account.</li>
+                                <li>Register a <Link to="/donate" className="styled__list__links">Food Donation</Link> or <Link to="/getfood" className="styled__list__links">Food Need</Link> request by filling a form.</li>
+                                <li>A representative from food organization will come to your location and fullfill the request, by ensuring the food quality checks.</li>
+                                <li>Congratulations, you have contributed for a good cause. Thanks for being a part of this movement.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                </div>
 
                 </Container>
                 </div>
-                
-                
-                
             </div>
         )
     }
