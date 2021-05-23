@@ -3,8 +3,7 @@ import { Container, Card, CardDeck, Row, Col, Image } from 'react-bootstrap'
 import {Link} from 'react-router-dom';
 import Header from '../header/form__header'
 import FoodDonation from '../../styles/img/food_donation_sized.png'
-import  FoodDrive from '../Images/FoodDrive.jpg';
-import  NeedFood from '../Images/HungryWoman.jpg';
+import  NeedFood from '../../styles/img/HungryWoman.jpg';
 import SaveEarth from '../../styles/img/save_world.jpg';
 import WasteFood from '../../styles/img/food_trash.jpg';
 import HelpHand from '../../styles/img/helping_hand.jpg';

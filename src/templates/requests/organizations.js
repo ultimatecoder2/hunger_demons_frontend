@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
 import FormHeader from'../header/form__header';
-import {Container, Row, Col, Image,Button,Form,Card,CardDeck} from 'react-bootstrap';
+import {Container, Row, Col,Form} from 'react-bootstrap';
 import './pickup.css';
 import {renderOrgCard} from './request_cards.js';
 import {fetchOrganizations} from '../../actions/index';
@@ -112,7 +112,7 @@ class Organizaitons extends Component {
             this.setState({
                 formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
             })
-            return false;
+            return !error;
         }else{
             this.setState({
                 formError:""
@@ -148,7 +148,7 @@ class Organizaitons extends Component {
     render() {
         const {pageNo, limit, tCount} = this.state;
         let mini = (pageNo-1)*limit + 1;
-        if(tCount==0){
+        if(tCount===0){
             mini = 0;
         }
         let maxi = Math.min(pageNo*limit , tCount)
