@@ -1,14 +1,11 @@
-import React,{Component} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
-import DeliveryMan from './Images/DeliveryMan.jpg';
-import  FoodDrive from './Images/FoodDrive.jpg';
-import  NeedFood from './Images/HungryWoman.jpg'; 
 import PersonFoodBasket from '../styles/img/PersonFoodBasket.png'
 import TargetImage from '../styles/img/target.jpg';
 import Puzzle from '../styles/img/puzzle.jpg';
 import Handshake from '../styles/img/handshake.jpg';
-import {Container, Row, Col, Image,Card,CardDeck} from 'react-bootstrap';
-import styles from './home.css';
+import {Container, Row, Col, Image} from 'react-bootstrap';
+import './home.css';
 
 function home() {
     return (
@@ -122,71 +119,7 @@ function home() {
                     </Col>
                     
                 </Row>
-            </section>
-        
-
-
-            {/* <section className="new__section" id="contribute__section">
-                <Container>
-                    <div className="section__title">
-                        <h3 className="section__header">
-                            Ways To Contribute
-                        </h3>
-                    </div>
-
-                    <div className="section__content card__section">
-                        <p>You can become an intervention of change in this project. Each contribution matters a lot. 
-                            We strongly believe in community participation. A good community can change the future and bring the hunger to an end.
-                            You can participate in this campaign in one of the following ways:</p>
-                        
-                        <CardDeck>
-                            <Card className="contribute__card">
-                                <Card.Img className="contribute__card--img" variant="top" src={FoodDrive} fluid="true"/>
-                                <Card.Body>
-                                    <Card.Title>Provide Food</Card.Title>
-                                    <Card.Text>
-                                        You can provide any kind of excess food. Whether food left from a birthday party or a marriage, you can contact us. One person will collect it from you and deliever to the unprivileged people.
-                                    </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                    <Link to="/donate" className ="btn contribute__card__btn">Provide Food &#8594;</Link>
-                                </Card.Footer>
-                            </Card>
-
-                            <Card className="contribute__card">
-                                <Card.Img className="contribute__card__img" variant="top" src={DeliveryMan} fluid="true"/>
-                                <Card.Body>
-                                    <Card.Title>Distribute Food</Card.Title>
-                                    <Card.Text>
-                                        Whether on a ride to home, market or office, you can pick up food from one of the nearby location and deliver to the nearest needy people.
-                                        This would be a great contribution towards feeding needy.
-                                        
-                                    </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                    <Link to="/donate_requests" className ="btn contribute__card__btn">Distribute Food &#8594;</Link>
-                                </Card.Footer>
-                            </Card>
-                            
-                            <Card className="contribute__card">
-                                <Card.Img className="contribute__card__img" variant="top" src={NeedFood} fluid="true"/>
-                                <Card.Body>
-                                    <Card.Title>Need Food</Card.Title>
-                                    
-                                    <Card.Text>
-                                        If you don't have enough food then you can register a request to us. We will try our best to provide you food as soon as possible. 
-                                    </Card.Text>
-                                </Card.Body>
-                                <Card.Footer>
-                                    <Link to="/getFood" className ="btn contribute__card__btn">Get food &#8594;</Link>
-                                </Card.Footer>
-                            </Card>
-                        </CardDeck>
-                    </div>
-                </Container>
-            </section> */}
-
-            
+            </section> 
             </Container>
         </div>
     )
