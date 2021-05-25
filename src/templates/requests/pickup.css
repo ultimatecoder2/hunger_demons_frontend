@@ -30,6 +30,8 @@
 }
 .floating_input{
     margin-bottom: 3rem;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 
@@ -98,13 +100,26 @@
     min-width: 8rem;
     margin: 8px;
     color: #fff;
-    background-color: #28a745;
-    border:2px solid #28a720;
+    
     transform:translate(10px, 8px);
 }
-.filter__button:hover{
+.apply_filter_btn{
+    background-color: #28a745;
+    border:2px solid #28a720;
+}
+.apply_filter_btn:hover{
     background-color:#2dc751;
 }
+
+.reset_filter_btn{
+    background-color: #ff0000;
+    border: 2px solid #ff2211;
+    margin-right: 1rem;
+}
+.reset_filter_btn:hover{
+    background-color: #ff5d5d;
+}
+
 .card__content__heading{
     font-weight: 600;
 }
