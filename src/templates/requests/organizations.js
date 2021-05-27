@@ -104,6 +104,15 @@ class Organizaitons extends Component {
         });
     }
 
+    handleFloatingInput = (event)=>{
+        const target = event.target;
+        const val = target.value;
+        const label= target.id;
+        this.setState({
+            [label]:val
+        })
+    }
+
     filterFormValidation = ()=>{
         const {city, postalCode} = this.state;
         let error=false;
@@ -183,9 +192,14 @@ class Organizaitons extends Component {
                                         value={this.state.postalCode}
                                     />
                                 </Col>
+                                <div className="invalid__feedback">{this.state.formError}</div>
                             </Form.Group>
+                            
+                            
+                            
                             <div style={{textAlign:'right'}}>   
-                                <button className="filter__button" onClick={this.handleFilterButton}>Search Requests</button>
+                                <button className="filter__button reset_filter_btn"  onClick={this.resetFilterButton}>Reset Filter</button>   
+                                <button className="filter__button apply_filter_btn" onClick={this.handleFilterButton}>Search Requests</button>
                             </div>    
                         </div>
 

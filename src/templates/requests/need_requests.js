@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
 import FormHeader from'../header/form__header';
-import {Container, Row, Col, Image,Button,Form,Card,CardDeck} from 'react-bootstrap';
-import Select from 'react-select'
+import {Container, Row, Col,Form} from 'react-bootstrap';
 import './pickup.css';
 import {renderCard} from './request_cards.js'
 import {foodTypes} from '../../variables';
-import {GiConsoleController, GiKnifeFork} from 'react-icons/gi';
 import {fetchRequests} from '../../actions/index'
 import FloatingLabelInput from 'react-floating-label-input';
 
@@ -127,7 +125,7 @@ class NeedRequest extends Component {
             this.setState({
                 formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
             })
-            return false;
+            return !error;
         }else{
             this.setState({
                 formError:""
@@ -164,7 +162,7 @@ class NeedRequest extends Component {
     render() {
         const {pageNo, limit, tCount} = this.state;
         let mini = (pageNo-1)*limit + 1;
-        if(tCount==0){
+        if(tCount===0){
             mini = 0;
         }
         let maxi = Math.min(pageNo*limit , tCount)
@@ -199,9 +197,12 @@ class NeedRequest extends Component {
                                         value={this.state.postalCode}
                                     />
                                 </Col>
+                                <div className="invalid__feedback">{this.state.formError}</div>
                             </Form.Group>
-                            <div style={{textAlign:'right'}}>   
-                                <button className="filter__button" onClick={this.handleFilterButton}>Search Requests</button>
+                            <div style={{textAlign:'right'}}>
+                                <button className="filter__button reset_filter_btn"  onClick={this.resetFilterButton}>Reset Filter</button>   
+                                <button className="filter__button apply_filter_btn" onClick={this.handleFilterButton}>Search Requests</button>
+                                
                             </div>    
                         </div>
 
