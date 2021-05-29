@@ -3,13 +3,12 @@ import {connect} from 'react-redux';
 import {AiOutlineMail} from 'react-icons/ai';
 import {RiLockPasswordFill} from 'react-icons/ri';
 import FormHeader from'../header/form__header';
-import {Container, Row, Col} from 'react-bootstrap';
+import {Container} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Form from 'react-bootstrap/Form';
 import './forms.css'
 import {signIn} from '../../actions/index';
-import history from '../../history'
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
