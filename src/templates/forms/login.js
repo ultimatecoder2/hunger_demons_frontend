@@ -53,9 +53,9 @@ class login extends Component{
             passwordError="Password is required"
             error= true;
         }
-        else if(password.length<5)
+        else if(password.length<6)
         {
-            passwordError="Length of password must be 5 characters or more"
+            passwordError="Password must be 6 or more characters long"
             error= true;
         }
         
@@ -82,7 +82,6 @@ class login extends Component{
             if(this.props.auth.error){
                 this.notifyFail(this.props.auth.error);
             }
-
         }
         
     }
@@ -99,14 +98,15 @@ class login extends Component{
                     </div>
                     <Form>
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Label><span className="form__icon"><AiOutlineMail/></span>Email address</Form.Label>
+                            <Form.Label><span className="form__icon"><AiOutlineMail/></span><span className="label__important">*</span> Email address</Form.Label>
                             <input name="email" className="form-control" type="email" value={this.state.email} placeholder="Enter email" onChange={this.handleInputChange} />
                             <div className="invalid__feedback">{this.state.errors.email}</div>
                         </Form.Group>
 
                         <Form.Group controlId="formBasicPassword">
-                            <Form.Label><span className="form__icon"><RiLockPasswordFill/></span> Password</Form.Label>
-                            <input name="password" className="form-control" type="password" value={this.state.password} placeholder="Password" onChange={this.handleInputChange} />
+                            <Form.Label><span className="form__icon"><RiLockPasswordFill/></span><span className="label__important">*</span> Password</Form.Label>
+                            <div className="muted_text--forms"> Password must be at least 6 characters.</div>
+                            <input name="password" className="form-control" type="password" value={this.state.password} placeholder="Password must be at least 6 characters" onChange={this.handleInputChange} />
                             <div className="invalid__feedback">{this.state.errors.password}</div>
                         </Form.Group>
                         <div className="form__btn">

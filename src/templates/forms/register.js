@@ -191,14 +191,14 @@ class register extends Component{
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="user__name">
-                                    <Form.Label><span className="form__icon"><VscOrganization/></span>Organization Name</Form.Label>
+                                    <Form.Label><span className="form__icon"><VscOrganization/></span><span className="label__important">*</span> Organization Name</Form.Label>
                                     <input name="organizationName" className="form-control" type="text" value={this.state.organizationName} placeholder="Enter name" onChange={this.handleInputChange} />
                                     <div className="invalid__feedback">{this.state.errors.organizationName}</div>
                                 </Form.Group>
                             </Col>
                             <Col md={6}>
                                 <Form.Group controlId="food__type">
-                                    <Form.Label><span className="form__icon"><GiKnifeFork/></span>Food Type</Form.Label>
+                                    <Form.Label><span className="form__icon"><GiKnifeFork/></span><span className="label__important">*</span> Food Type</Form.Label>
                                     <div><Select isMulti name="foodType" options={foodTypes} className="basic-multi-select" value={this.state.foodtype} onChange={this.handleMultiSelectChange} classNamePrefix="select"/></div>
                                     <div className="invalid__feedback">{this.state.errors.foodtype}</div>
                                 </Form.Group>
@@ -210,14 +210,14 @@ class register extends Component{
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="user__email">
-                                    <Form.Label><span className="form__icon"><AiOutlineMail/></span>Email address</Form.Label>
+                                    <Form.Label><span className="form__icon"><AiOutlineMail/></span><span className="label__important">*</span> Email address</Form.Label>
                                     <input name="email" className="form-control" type="email" value={this.state.email} placeholder="Enter email" onChange={this.handleInputChange} />
                                     <div className="invalid__feedback">{this.state.errors.email}</div>
                                 </Form.Group>
                             </Col>
                             <Col md={6}>
                                 <Form.Group controlId="user__contact">
-                                    <Form.Label><span className="form__icon"><FiPhoneCall/></span> Contact</Form.Label>
+                                    <Form.Label><span className="form__icon"><FiPhoneCall/></span><span className="label__important">*</span> Contact</Form.Label>
                                     <input name="contact" className="form-control" type="text" value={this.state.contact} placeholder="Contact Number" onChange={this.handleInputChange} />
                                     <div className="invalid__feedback">{this.state.errors.contact}</div>
                                 </Form.Group>
@@ -226,7 +226,7 @@ class register extends Component{
                         
                         
                         <Form.Group controlId="user__address--1">
-                            <Form.Label><span className="form__icon"><FaAddressCard/></span>Address Line 1</Form.Label>
+                            <Form.Label><span className="form__icon"><FaAddressCard/></span><span className="label__important">*</span> Address Line 1</Form.Label>
                             <input name="addressLine1" className="form-control" type="text" value={this.state.addressLine1} placeholder="Enter address" onChange={this.handleInputChange} />
                             <div className="invalid__feedback">{this.state.errors.addressLine1}</div>
                         </Form.Group>
@@ -239,14 +239,14 @@ class register extends Component{
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="user__city">
-                                    <Form.Label><span className="form__icon"><FaCity/></span>City</Form.Label>
+                                    <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">*</span> City</Form.Label>
                                     <input name="city" className="form-control" type="text" value={this.state.city} placeholder="Enter city" onChange={this.handleInputChange} />
                                     <div className="invalid__feedback">{this.state.errors.city}</div>
                                 </Form.Group>
                             </Col>
                             <Col md={6}>
                                 <Form.Group controlId="user__zip">
-                                    <Form.Label><span className="form__icon"><GiMailbox/></span>Postal Code</Form.Label>
+                                    <Form.Label><span className="form__icon"><GiMailbox/></span><span className="label__important">*</span> Postal Code</Form.Label>
                                     <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
                                     <div className="invalid__feedback">{this.state.errors.postalCode}</div>
                                 </Form.Group>
@@ -256,14 +256,14 @@ class register extends Component{
                         <Row>
                             <Col md={6}>
                                 <Form.Group controlId="user__country">
-                                    <Form.Label><span className="form__icon"><FaGlobeAmericas/></span>Country</Form.Label>
+                                    <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
                                     <CountryDropdown value={this.state.country} className="form-control" onChange={(val) => this.selectCountry(val)} required/>
                                     <div className="invalid__feedback">{this.state.errors.country}</div>
                                 </Form.Group>        
                             </Col>
                             <Col md={6}>
                                 <Form.Group controlId="user__state">
-                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span>State</Form.Label>
+                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> State</Form.Label>
                                         <RegionDropdown blankOptionLabel="Select a country first" defaultOptionLabel="Select a region" className="form-control" 
                                             country={this.state.country} value={this.state.addressState} onChange={this.selectState}/>
                                     <div className="invalid__feedback">{this.state.errors.addressState}</div>

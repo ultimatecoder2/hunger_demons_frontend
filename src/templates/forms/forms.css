@@ -58,6 +58,17 @@
     color:#444;
 }
 
+.label__important{
+    color: red;
+    font-weight: bold;    
+}
+
+.muted_text--forms{
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 500;
+}
+
 .form__icon{
     margin-left: 4px;
     margin-right: 8px;
