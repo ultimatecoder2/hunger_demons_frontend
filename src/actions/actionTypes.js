@@ -1,0 +1,26 @@
+//Authentication
+export const SIGN_UP = 'SIGN_UP';
+export const SIGN_IN = 'SIGN_IN';
+export const SIGN_OUT = 'SIGN_OUT';
+export const AUTH_FAILED = 'AUTH_FAILED';
+
+//Organization
+export const ADD_ORGANIZATION = "ADD_ORGANIZATION"
+export const ADD_ORGANIZATION_FAILED = "ADD_ORGANIZATION_FAILED"
+export const FETCH_ORGANIZATION = "FETCH_ORGANIZATION"
+export const FETCH_ORGANIZATION_FAILED = "FETCH_ORGANIZATION_FAILED"
+
+
+// Request
+export const ADD_REQUEST = "ADD_REQUEST"
+export const DELETE_REQUEST = "DELETE_REQUEST"
+export const REQUEST_FAILED = "REQUEST_FAILED"
+export const FETCH_DONATE_REQUEST = "FETCH_DONATE_REQUEST"
+export const FETCH_NEED_REQUEST = "FETCH_NEED_REQUEST"
+
+//Profile update Forms
+export const UPDATE_FORM = "UPDATE_FORM"
+export const UPDATE_FAILED = "UPDATE_FAILED"
+//GET PROFILE
+export const FETCH_PROFILE = "FETCH_PROFILE"
+export const FETCH_PROFILE_FAILED = "FETCH_PROFILE_FAILED"
