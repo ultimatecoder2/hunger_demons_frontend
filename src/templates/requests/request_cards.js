@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 import {AiOutlineMail} from 'react-icons/ai';
 import {FiPhoneCall} from 'react-icons/fi';
 import {FaAddressCard} from 'react-icons/fa';
-import {ImCalendar} from 'react-icons/im';
+import {ImCalendar, ImBin} from 'react-icons/im';
 
 const renderFoodDescription = (foodDescription)=>{
     return foodDescription.map(({foodName, quantity})=>{
@@ -52,7 +52,8 @@ export const renderCard = function(props){
     <FadeTransform in transformProps={{exitTransform: 'scale(0.5) translateY(-50%)'}}>
         <Card>
             <Card.Body>
-                <Card.Title tag="h6">{foodType}</Card.Title>
+                {isAuth && <span className="delete__button--card" onClick=""><ImBin/></span>}
+                <Card.Title tag="h6">{foodType}</Card.Title>                
                 <div className="request__card--address">
                     <div><span className="request__card--icon"><ImCalendar/></span>
                     {new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(Date.parse(FoodDetail.updatedAt)))}</div>

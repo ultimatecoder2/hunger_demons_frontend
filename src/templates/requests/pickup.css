@@ -152,3 +152,10 @@
     margin-bottom: .8rem;
     height: 20px;
 }
+.delete__button--card{
+    display: inline;
+    color: red;
+    float: right;
+    font-size: 1.3rem;
+    margin-right: .8rem;
+}
