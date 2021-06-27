@@ -3,6 +3,11 @@ export const SIGN_UP = 'SIGN_UP';
 export const SIGN_IN = 'SIGN_IN';
 export const SIGN_OUT = 'SIGN_OUT';
 export const AUTH_FAILED = 'AUTH_FAILED';
+export const FORGOT_PASS = 'FORGOT_PASS';
+export const FORGOT_PASS_FAILED = 'FORGOT_PASS_FAILED';
+export const RESET_PASS = 'RESET_PASS'
+export const RESET_PASS_FAILED = 'RESET_PASS_FAILED'
+
 
 //Organization
 export const ADD_ORGANIZATION = "ADD_ORGANIZATION"
@@ -17,6 +22,8 @@ export const DELETE_REQUEST = "DELETE_REQUEST"
 export const REQUEST_FAILED = "REQUEST_FAILED"
 export const FETCH_DONATE_REQUEST = "FETCH_DONATE_REQUEST"
 export const FETCH_NEED_REQUEST = "FETCH_NEED_REQUEST"
+export const DELETE_FOOD_REQUEST = "DELETE_FOOD_REQUEST"
+export const DELETE_FOOD_REQUEST_FAILED = "DELETE_FOOD_REQUEST_FAILED"
 
 //Profile update Forms
 export const UPDATE_FORM = "UPDATE_FORM"

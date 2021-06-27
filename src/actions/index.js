@@ -1,6 +1,5 @@
-import {record, authRecord} from '../apis/feed_needy';
-import history from '../history';
-import {signUp, signIn, signOut} from './auth'
+import {record} from '../apis/feed_needy';
+import {signUp, signIn, signOut, forgetPassword, resetPassword} from './auth'
 import {addOrganization, fetchOrganizations} from './organizations'
 import {addRequest, fetchRequests, fetchUserRequests} from './requests'
 import {updateProfile, updateAddress, fetchProfile} from './user';
@@ -12,7 +11,8 @@ import {updateProfile, updateAddress, fetchProfile} from './user';
 export {signUp};
 export {signIn};
 export {signOut};
-
+export {forgetPassword};
+export {resetPassword};
 
 //Organizations
 export {addOrganization};
