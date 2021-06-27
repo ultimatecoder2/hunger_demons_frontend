@@ -6,7 +6,8 @@ const INITIAL_STATE = {
     error:null,
     message:null
 }
-export default (state=INITIAL_STATE,action)=>{
+/* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
+export default (state=INITIAL_STATE, action) => {
     switch(action.type){
         case SIGN_UP:
             return{...state, isSignedIn:true, userId:action.payload.user._id, token:action.payload.token, error:null, message:null}

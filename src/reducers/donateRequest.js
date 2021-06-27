@@ -4,6 +4,9 @@ const INITIAL_STATE = {
     message:null, 
     data:null
 }
+
+/* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
+
 export default (state=INITIAL_STATE,action)=>{
     switch(action.type){
         case REQUEST_FAILED:
