@@ -25,7 +25,6 @@ export const updateProfile = (data) => async (dispatch,getState) =>{
 
         dispatch({type:UPDATE_FORM,payload:{msg:"Your request has been registered"}});
     }catch(e){
-        let error = e;
         console.log("Error",e);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
     }
@@ -39,7 +38,6 @@ export const updateAddress = (data) => async (dispatch,getState) =>{
 
         dispatch({type:UPDATE_FORM,payload:{msg:"Your request has been registered"}});
     }catch(e){
-        let error = e;
         console.log("Error",e);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
     }
