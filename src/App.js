@@ -9,6 +9,8 @@ import SignUp from './templates/forms/signup';
 import Login from './templates/forms/login';
 import Logout from './templates/forms/logout';
 import Register from './templates/forms/register';
+import ForgetPassword from './templates/forms/forgot_password';
+import ResetPassword from './templates/forms/reset_password';
 import Contribute from './templates/contribute/contribute'
 import DonateFood from './templates/forms/donate_food/donate_food';
 import GetFood from './templates/forms/get_food/get_food';
@@ -31,7 +33,8 @@ function App() {
         <Route path="/signup"><SignUp/></Route>
         
         <Route path="/logout"><Logout/></Route>
-
+        <Route path="/forgot_password"><ForgetPassword/></Route>
+        <Route exact path="/reset_password/:id/:token" component={ResetPassword}/>
         <Route path="/register"><Register/></Route>
 
         <Route path="/contribute"><Contribute/></Route>
