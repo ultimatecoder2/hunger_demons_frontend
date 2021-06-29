@@ -4,8 +4,9 @@ import FormHeader from'../header/form__header';
 import {Container, Row, Col,Form} from 'react-bootstrap';
 import './pickup.css';
 import {renderCard} from './request_cards.js'
+import {toast, ToastContainer} from 'react-toastify';
 import {foodTypes} from '../../variables';
-import {fetchRequests} from '../../actions/index'
+import {fetchRequests, deleteFoodRequest} from '../../actions/index'
 import FloatingLabelInput from 'react-floating-label-input';
 
 class NeedRequest extends Component {
@@ -26,6 +27,10 @@ class NeedRequest extends Component {
             isLast:false
         }
     }
+
+    notifyFail = (message) => toast.error(message);
+    notifySuccess = (message) => toast.success(message);
+
     fetchNextPosts = async ()=>{
         let {pageNo, limit, tCount, requestType, city, state, country, postalCode}= this.state;
         const skip = (pageNo)*limit;
@@ -142,6 +147,15 @@ class NeedRequest extends Component {
             // console.log("Valid");
         }
     }
+
+    deleteFoodPost = async(id)=>{
+        await this.props.deleteFoodRequest({id})
+        if(this.props.foodRequestConfirmation.error){
+            this.notifyFail(this.props.foodRequestConfirmation.error);
+        }else if(this.props.foodRequestConfirmation.message){
+            this.notifySuccess(this.props.foodRequestConfirmation.message);
+        }
+    }
     
     renderRequests = ()=>{
         const {posts, limit} = this.state;
@@ -149,7 +163,7 @@ class NeedRequest extends Component {
             return posts.map((post,  key)=>{
                 if(key>=limit)
                     return null;
-                return renderCard({post,val:key, authId:this.props.auth.userId})
+                return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
             })
         }else{
             return(
@@ -170,6 +184,7 @@ class NeedRequest extends Component {
         return (
             <div>
                 <FormHeader/>
+                <ToastContainer/>
                 <div className="forms__section--food">
                     <Container>    
                         <div className="form__heading">
@@ -230,9 +245,10 @@ const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
         food_Requests:state.needRequests,
-        auth:state.auth
+        auth:state.auth,
+        foodRequestConfirmation: state.foodRequest 
     })
 
 }
 
-export default connect(mapStateToProps,{fetchRequests})(NeedRequest);
+export default connect(mapStateToProps,{fetchRequests, deleteFoodRequest})(NeedRequest);
