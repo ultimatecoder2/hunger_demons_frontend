@@ -159,3 +159,8 @@
     font-size: 1.3rem;
     margin-right: .8rem;
 }
+
+.scroll_div_outer{
+    display: flex;
+    justify-content: space-around;
+}
