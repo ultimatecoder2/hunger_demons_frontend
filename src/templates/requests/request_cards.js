@@ -46,13 +46,14 @@ export const renderCard = function(props){
         isAuth = true;
     foodType = foodType[0]
     address = address[0]
+    
 
     return(
     <div className='request__card' key={val}>
     <FadeTransform in transformProps={{exitTransform: 'scale(0.5) translateY(-50%)'}}>
         <Card>
             <Card.Body>
-                {isAuth && <span className="delete__button--card" onClick=""><ImBin/></span>}
+                {isAuth && <Link to="#"><span className="delete__button--card" onClick={()=> props.deleteFoodRequest(FoodDetail._id)}><ImBin/></span></Link>}
                 <Card.Title tag="h6">{foodType}</Card.Title>                
                 <div className="request__card--address">
                     <div><span className="request__card--icon"><ImCalendar/></span>
