@@ -1,3 +1,4 @@
+import { Country}  from 'country-state-city';
 export const foodTypes = [{value:'Packaged Food',label:'Packaged Food'}, 
     {value:'Raw Food', label:'Raw Food'}, 
     {value:'Cooked Food', label:'Cooked Food'}
@@ -23,3 +24,12 @@ export const foodOptions ={
         {value:'Cooked Vegetable', label:'Cooked Vegetable'}
     ]
 }
+
+/**/
+let countries = Country.getAllCountries();
+let newCountryList = []
+for(var i=0;i<countries.length;i++){
+    var obj = {label:countries[i].name, value:countries[i].name, country_code:countries[i].isoCode}
+    newCountryList.push(obj);
+}
+export const countryList =  newCountryList;
