@@ -6,6 +6,7 @@ import './pickup.css';
 import {renderOrgCard} from './request_cards.js';
 import {fetchOrganizations} from '../../actions/index';
 import FloatingLabelInput from 'react-floating-label-input';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 class Organizaitons extends Component {
     constructor(props){
@@ -16,81 +17,43 @@ class Organizaitons extends Component {
             state:"",
             country:"",
             postalCode:"",
-            pageNo:0,
-            limit:9,
-            tCount:0,
-            organizations:"",
+            data:[],
             formError:"",
-            isLast:false
-        }
+            hasMore: true,
+            limit:12
+            }
     }
 
-    fetchNextOrg = async()=>{
-        const {pageNo, limit, city, state, country, postalCode}= this.state;
-        const skip = (pageNo)*limit;
-        let data = {Limit:limit, Skip:skip, city, state, country, postalCode}
-        await this.props.fetchOrganizations(data);
+    fetchData = async()=>{
+        if(!this.state.hasMore) return;
+        let { data, limit, requestType, city, state, country, postalCode}= this.state;
+        const skip = data.length;
+        let apiData = {Limit:limit, Skip:skip, requestType, city, state, country, postalCode}
+        await this.props.fetchOrganizations(apiData);
         if(this.props.orgs.message==="Success"){
-            this.setState({
-                tCount:this.props.orgs.data.count,
-                organizations: this.props.orgs.data.organization,
-                pageNo: this.state.pageNo+1,
-                isLast:((skip+limit)>=this.props.orgs.data.count),
-            })
+            let newData = this.props.orgs.data.organization;
+            if(newData&& newData.length>0){
+                var hasMoreNew;
+                if(newData.length<limit){
+                    hasMoreNew = false;
+                }else{
+                    hasMoreNew = true;
+                }
+                const resData = data.concat(newData)
+                this.setState({
+                    hasMore: hasMoreNew,
+                    data: resData
+                })
+            }else{
+                this.setState({hasMore:false})
+            }
         }
     }
 
-    fetchPrevOrg = async()=>{
-        const {pageNo, limit, city, state, country, postalCode}= this.state;
-        if(pageNo<=1)
-            return;
-        const skip = (pageNo-2)*limit;
-        let data = {Limit:limit, Skip:skip, city, state, country, postalCode}
-        await this.props.fetchOrganizations(data);
-        if(this.props.orgs.message==="Success"){
-            this.setState({
-                tCount:this.props.orgs.data.count,
-                organizations: this.props.orgs.data.organization,
-                pageNo: this.state.pageNo-1,
-                isLast:((skip+limit)>=this.props.orgs.data.count),
-            })
-        }
-
-    }
-
-    fetchOrg = async()=>{
-        const {pageNo, limit, requestType, city, state, country, postalCode}= this.state;
-        const skip = 0;
-        let data = {Limit:limit, Skip:skip, requestType, city, state, country, postalCode}
-        await this.props.fetchOrganizations(data);
-        if(this.props.orgs.message==="Success"){
-            this.setState({
-                tCount:this.props.orgs.data.count,
-                organizations: this.props.orgs.data.organization,
-                pageNo:1,
-                isLast:limit>this.props.orgs.data.count
-            })
-        }
-    }
     componentDidMount = async()=>{
-        await this.fetchNextOrg();
+        await this.fetchData();
     }
     
-    nextPage = async(e)=>{
-        e.preventDefault();
-        const {tCount, pageNo, limit} = this.state;
-        if(tCount>pageNo*limit){
-            this.fetchNextOrg();
-        }
-    }
-
-    prevPage = async(e)=>{
-        e.preventDefault();
-        const {tCount, pageNo, limit} = this.state;
-        if(pageNo>1){
-            this.fetchPrevOrg();
-        }
-    }
     
     handleMultiSelectChange = foodtype => {
         this.setState({ foodtype });
@@ -121,13 +84,12 @@ class Organizaitons extends Component {
             this.setState({
                 formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
             })
-            return !error;
         }else{
             this.setState({
                 formError:""
             })
-            return true;
         }
+        return !error;
     }
 
     handleFilterButton = (e)=>{
@@ -135,15 +97,13 @@ class Organizaitons extends Component {
         const isValid = this.filterFormValidation();
         if(isValid){
             this.fetchOrg();
-            // console.log("Valid");
         }
     }
     
     renderRequests = ()=>{
-        const {organizations} = this.state;
+        const organizations = this.state.data;
         if(organizations&&organizations.length>0){
             return organizations.map((post,  key)=>{
-                console.log(post);
                 return renderOrgCard({post,val:key})
             })
         }else{
@@ -155,13 +115,6 @@ class Organizaitons extends Component {
     }
 
     render() {
-        const {pageNo, limit, tCount} = this.state;
-        let mini = (pageNo-1)*limit + 1;
-        if(tCount===0){
-            mini = 0;
-        }
-        let maxi = Math.min(pageNo*limit , tCount)
-        
         return (
             <div>
                 <FormHeader/>
@@ -203,17 +156,17 @@ class Organizaitons extends Component {
                             </div>    
                         </div>
 
-                        <div>
-                                <p>Showing {mini} - {maxi} of {tCount}</p>
-                        </div>
-                        
-                        <div className="navigation__btns">
-                            <button className="page_navigation_btn  btn--prev_page" onClick={this.prevPage} disabled={(this.state.pageNo===1)}>Previous Page</button>
-                            <button className = "page_navigation_btn btn--next_page" onClick={this.nextPage} disabled={this.state.isLast}>Next Page</button>
-                        </div>
-
                         <div className="requests__content">
-                            {this.renderRequests()}
+                            <InfiniteScroll 
+                                dataLength={this.state.data.length}
+                                next = {this.fetchData}
+                                hasMore = {this.state.hasMore}
+                                loader={<h4>Loading........</h4>}
+                                endMessage={<></>}
+                                className="flex flex-wrap scroll_div_outer"
+                            >
+                                {this.renderRequests()}
+                            </InfiniteScroll>
                         </div>
                     </Container>
                 </div>
