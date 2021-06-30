@@ -5,7 +5,7 @@ import ScrollToTop from './scrollToTop';
 import Header from './templates/header/header';
 import Footer from './templates/footer/footer';
 import Home from './templates/home';
-import SignUp from './templates/forms/signup';
+import SignUp from './templates/forms/signup_test';
 import Login from './templates/forms/login';
 import Logout from './templates/forms/logout';
 import Register from './templates/forms/register';
@@ -16,7 +16,7 @@ import DonateFood from './templates/forms/donate_food/donate_food';
 import GetFood from './templates/forms/get_food/get_food';
 import history from './history';
 import Profile from './templates/profile/user_profile'
-import DonateRequest from './templates/requests/pickup'
+import DonateRequest from './templates/requests/donation_requests'
 import NeedRequest from './templates/requests/need_requests'
 import Organizations from './templates/requests/organizations'
 import './App.css';
