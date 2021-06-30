@@ -1,7 +1,6 @@
-import React, { Component } from 'react'
-import {Container, Row, Col, Image,Button,Form,Card,CardDeck} from 'react-bootstrap';
+import React from 'react'
+import {Button,Card,CardDeck} from 'react-bootstrap';
 import { FadeTransform } from 'react-animation-components';
-import ReactImageAppear from 'react-image-appear';
 import {Link} from 'react-router-dom';
 import {AiOutlineMail} from 'react-icons/ai';
 import {FiPhoneCall} from 'react-icons/fi';
@@ -20,27 +19,25 @@ const renderAddress = (address) =>{
         <span className="request__card--icon"><FaAddressCard/></span>
         Address: &nbsp;
     </span>
-    {addressLine1}, {addressLine2}, {city}, {state}, {country}, {postalCode}</>
+    {addressLine1}, {addressLine2}, {city.value}, {state}, {country}, {postalCode}</>
     )
     
 }
 
-const renderAuthButtons = (data)=>{
-    return(
-        <div className="mt-2 card__buttons" >
-            <button className="col-xs-5 card__button--bottom btn__edit">Edit Request</button>
-            <button className="col-xs-5 card__button--bottom btn__delete">Delete Request</button>
-        </div>
-    )
+// const renderAuthButtons = (data)=>{
+//     return(
+//         <div className="mt-2 card__buttons" >
+//             <button className="col-xs-5 card__button--bottom btn__edit">Edit Request</button>
+//             <button className="col-xs-5 card__button--bottom btn__delete">Delete Request</button>
+//         </div>
+//     )
 
-}
+// }
 
 export const renderCard = function(props){
-    // console.log(props);
     const FoodDetail = props.post;
     let {val, authId}= props;
     let isAuth =false;
-    // console.log(FoodDetail);
     let {foodType, food_description, address, owner} = FoodDetail
     if(owner===authId)
         isAuth = true;
@@ -78,7 +75,6 @@ export const renderCard = function(props){
 )}
 
 const renderFoodList = (foodL)=>{
-    console.log(foodL);
     return foodL.map(food=>{
         return food+', '
 
@@ -86,7 +82,6 @@ const renderFoodList = (foodL)=>{
 
 }
 export const renderOrgCard = function(props){
-    console.log(props);
     const OrgDetail = props.post;
     let {val}= props;
     let {foodType, email, address, contact, name} = OrgDetail
@@ -123,7 +118,7 @@ export const renderOrgCard = function(props){
 
                         <div className="card__content--row">
                             <span className="card__content__heading">
-                                <span className="request__card--icon"><AiOutlineMail/></span>
+                                <span className="request__card--icon"><FiPhoneCall/></span>
                                 Contact: &nbsp;
                             </span>
                                 {contact}
