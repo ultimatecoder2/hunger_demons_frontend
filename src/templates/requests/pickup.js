@@ -4,7 +4,8 @@ import FormHeader from'../header/form__header';
 import {Container, Row, Col,Form} from 'react-bootstrap';
 import './pickup.css';
 import {renderCard} from './request_cards.js'
-import {fetchRequests} from '../../actions/index'
+import {fetchRequests, deleteFoodRequest} from '../../actions/index'
+import {toast, ToastContainer} from 'react-toastify';
 // import Input from 'react-select/src/components/input';
 import FloatingLabelInput from 'react-floating-label-input';
 
@@ -26,6 +27,10 @@ class PickupRequest extends Component {
             isLast:false
         }
     }
+    
+    notifyFail = (message) => toast.error(message);
+    notifySuccess = (message) => toast.success(message);
+
     fetchNextPosts = async ()=>{
         let {pageNo, limit, tCount, requestType, city, state, country, postalCode}= this.state;
         const skip = (pageNo)*limit;
@@ -139,12 +144,21 @@ class PickupRequest extends Component {
             this.fetchPosts();
         }
     }
+
+    deleteFoodPost = async(id)=>{
+        await this.props.deleteFoodRequest({id})
+        if(this.props.foodRequestConfirmation.error){
+            this.notifyFail(this.props.foodRequestConfirmation.error);
+        }else if(this.props.foodRequestConfirmation.message){
+            this.notifySuccess(this.props.foodRequestConfirmation.message);
+        }
+    }
     
     renderRequests = ()=>{
         const {posts} = this.state;
         if(posts&&posts.length>0){
             return posts.map((post,  key)=>{
-                return renderCard({post,val:key, authId:this.props.auth.userId})
+                return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
             })
         }else{
             return(
@@ -165,6 +179,7 @@ class PickupRequest extends Component {
         return (
             <div>
                 <FormHeader/>
+                <ToastContainer/>
                 <div className="forms__section--food">
                     <Container>    
                         <div className="form__heading">
@@ -227,9 +242,10 @@ const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
         food_Requests:state.donateRequests,
-        auth:state.auth
+        auth:state.auth,
+        foodRequestConfirmation: state.foodRequest 
     })
 
 }
 
-export default connect(mapStateToProps,{fetchRequests})(PickupRequest);
+export default connect(mapStateToProps,{fetchRequests, deleteFoodRequest})(PickupRequest);
