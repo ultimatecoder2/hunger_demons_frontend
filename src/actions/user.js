@@ -38,7 +38,7 @@ export const updateAddress = (data) => async (dispatch,getState) =>{
 
         dispatch({type:UPDATE_FORM,payload:{msg:"Your request has been registered"}});
     }catch(e){
-        console.log("Error",e);
+        console.log("Error",e.response);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
     }
 }
