@@ -15,10 +15,10 @@ import Table from 'react-bootstrap/Table'
 //Icons
 import {GiMailbox} from 'react-icons/gi';
 import {FaAddressCard,FaCity,FaGlobeAmericas,FaMapMarkedAlt} from 'react-icons/fa';
-import { CountryDropdown, RegionDropdown} from 'react-country-region-selector';
 import {BiNotepad} from 'react-icons/bi';
 import {GiKnifeFork} from 'react-icons/gi';
-
+import { Country, State, City }  from 'country-state-city';
+import { countryList } from '../../../variables';
 
 
 class DonateFood extends Component{
@@ -37,6 +37,9 @@ class DonateFood extends Component{
             addressState:"",
             postalCode:"",
             country:"",
+            stateList:[],
+            cityList:[],
+            address:[],
             errors:{
                 foodtype:"",
                 food_description:"",
@@ -63,12 +66,42 @@ class DonateFood extends Component{
           [name]: event.target.value
         });
     }
-    selectState= val =>{
-        this.setState({ addressState: val });
+
+    handleCountryChange = value=>{
+        let states = State.getStatesOfCountry(value.country_code);
+        let newStateList = []
+        for(var i=0;i<states.length;i++){
+            var obj = {label:states[i].name, value:states[i].name, state_code:states[i].isoCode, country_code:states[i].countryCode}
+            newStateList.push(obj);   
+        }
+        this.setState({
+            country:value,
+            countryCode:value.country_code,
+            stateList: newStateList,
+            addressState:"",
+            city:""
+        })
     }
-    selectCountry = val =>{
-        this.setState({ country: val });
-    };
+    handleAddressStateChange = value =>{
+        let cities = City.getCitiesOfState(value.country_code, value.state_code);
+        let newCityList = [];
+        for(var i=0;i<cities.length;i++){
+            var obj = {label:cities[i].name, value:cities[i].name, state_code:cities[i].stateCode, country_code:cities[i].countryCode}
+            newCityList.push(obj);   
+        }
+        this.setState({
+            addressState:value,
+            cityList: newCityList,
+            city:""
+        })
+    }
+
+    handleCityChange = value =>{
+        this.setState({
+            city:value
+        })
+
+    }
 
     notifyFail = (message) => toast.error(message);
     notifySuccess = (message) => toast.success(message);
@@ -166,11 +199,11 @@ class DonateFood extends Component{
             addressError=  "This address field is required";
             error=true;
         }
-        if(!city.trim()){
+        if(!city){
             cityError="City is required";
             error=true;
         }
-        if(!addressState.trim()){
+        if(!addressState){
             stateError = "State is required";
             error=true;
         }
@@ -212,10 +245,11 @@ class DonateFood extends Component{
                 food_description, 
                 address:{
                     addressLine1, addressLine2, 
-                    city, state:addressState,
-                    postalCode, country 
+                    city, state:addressState.value,
+                    postalCode, country:country.value 
                 }
             }
+
             await this.props.addRequest(data);
             if(this.props.foodRequest.message){
                 this.notifySuccess(this.props.foodRequest.message);
@@ -323,39 +357,39 @@ class DonateFood extends Component{
                     </Form.Group>
 
                     <Row>
-                        <Col md={6}>
-                            <Form.Group controlId="user__city">
-                                <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">*</span> City</Form.Label>
-                                <input name="city" className="form-control" type="text" value={this.state.city} placeholder="Enter city" onChange={this.handleInputChange} />
-                                <div className="invalid__feedback">{this.state.errors.city}</div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group controlId="user__zip">
-                                <Form.Label><span className="form__icon"><GiMailbox/></span><span className="label__important">*</span> Postal Code</Form.Label>
-                                <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
-                                <div className="invalid__feedback">{this.state.errors.postalCode}</div>
-                            </Form.Group>       
-                        </Col>
-                    </Row>
+                            <Col md={6}>
+                                <Form.Group controlId="user__country">
+                                    <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
+                                    <Select name="country" options={countryList} className="basic-multi-select" value={this.state.country} onChange={this.handleCountryChange} classNamePrefix="select" placeholder="Select Country"/>
+                                    <div className="invalid__feedback">{this.state.errors.country}</div>
+                                </Form.Group>        
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="user__state">
+                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> State</Form.Label>
+                                    <Select name="addressState" options={this.state.stateList} className="basic-multi-select" value={this.state.addressState} onChange={this.handleAddressStateChange} classNamePrefix="select" placeholder="Select State"/>
+                                    
+                                    <div className="invalid__feedback">{this.state.errors.addressState}</div>
+                                </Form.Group>        
+                            </Col>
+                        </Row>
 
-                    <Row>
-                        <Col md={6}>
-                            <Form.Group controlId="user__country">
-                                <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
-                                <CountryDropdown value={this.state.country} className="form-control" onChange={(val) => this.selectCountry(val)} required/>
-                                <div className="invalid__feedback">{this.state.errors.country}</div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group controlId="user__state">
-                                <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> Region</Form.Label>
-                                <RegionDropdown blankOptionLabel="Select a country first" defaultOptionLabel="Select a region" className="form-control" 
-                                    country={this.state.country} value={this.state.addressState} onChange={this.selectState}/>
-                                <div className="invalid__feedback">{this.state.errors.addressState}</div>
-                            </Form.Group>        
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group controlId="user__city">
+                                    <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">*</span> City</Form.Label>
+                                    <Select name="city" options={this.state.cityList} className="basic-multi-select" value={this.state.city} onChange={this.handleCityChange} classNamePrefix="select" placeholder="Select City"/>
+                                    <div className="invalid__feedback">{this.state.errors.city}</div>
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="user__zip">
+                                    <Form.Label><span className="form__icon"><GiMailbox/></span><span className="label__important">*</span> Postal Code</Form.Label>
+                                    <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
+                                    <div className="invalid__feedback">{this.state.errors.postalCode}</div>
+                                </Form.Group>
+                            </Col>
+                        </Row>
                 </Form>
                 <div className="form__btn">
                     <button className="form__btn--normal btn--green mr-3" type="submit" onClick={this.handleSubmit}>
