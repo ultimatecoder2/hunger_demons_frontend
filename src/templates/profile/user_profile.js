@@ -5,11 +5,14 @@ import { CountryDropdown, RegionDropdown} from 'react-country-region-selector';
 import { Link, useParams } from "react-router-dom";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Country, State, City }  from 'country-state-city';
+import Select from 'react-select'
 //Components/ files
 import './user_profile.css'
 import userImg from '../../styles/img/profile.jpg';
 import FormHeader from'../header/form__header';
 import {renderCard} from '../requests/request_cards'
+import { countryList } from '../../variables';
 //Bootstrap
 import { Container, Row, Col, Image, Nav, NavItem, NavLink, Form} from "react-bootstrap";
 import {Modal, ModalHeader, ModalBody, ModalFooter} from "reactstrap";
@@ -22,111 +25,10 @@ import {FiPhoneCall} from 'react-icons/fi';
 import {FaAddressCard,FaCity,FaGlobeAmericas,FaMapMarkedAlt,FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri';
 import {GiMailbox} from 'react-icons/gi';
+// apis
 import { updateProfile, updateAddress, fetchProfile} from "../../actions/index";
 import UserDonations from './user_donations'
 import UserNeed from './user_need'
-// let { id } = useParams();
-
-
-const requests = [{
-    foodType:"Cooked Food",
-    food_description:[
-        {
-            food:"Chapati",
-            quantity:5
-        },
-        {
-            food:"Rice",
-            quantity:3
-        },
-        {
-            food:"Vegetable",
-            quantity:5
-        }
-    ],
-    address:{
-        addressLine1:"141, North Eastern Peninsula",
-        addressLine2:"Western Lane",
-        city:"Racoonwall",
-        state:"Zooland",
-        postalCode:"K13497",
-        country:"Animal Planet"
-    }
-}, {
-    foodType:"Cooked Food",
-    food_description:[
-        {
-            food:"Chapati",
-            quantity:5
-        },
-        {
-            food:"Rice",
-            quantity:3
-        },
-        {
-            food:"Vegetable",
-            quantity:5
-        }
-    ],
-    address:{
-        addressLine1:"141, North Eastern Peninsula",
-        addressLine2:"Western Lane",
-        city:"Racoonwall",
-        state:"Zooland",
-        postalCode:"K13497",
-        country:"Animal Planet"
-    }
-}, {
-    foodType:"Cooked Food",
-    food_description:[
-        {
-            food:"Chapati",
-            quantity:5
-        },
-        {
-            food:"Rice",
-            quantity:3
-        },
-        {
-            food:"Vegetable",
-            quantity:5
-        }
-    ],
-    address:{
-        addressLine1:"141, North Eastern Peninsula",
-        addressLine2:"Western Lane",
-        city:"Racoonwall",
-        state:"Zooland",
-        postalCode:"K13497",
-        country:"Animal Planet"
-    }
-}, {
-    foodType:"Cooked Food",
-    food_description:[
-        {
-            food:"Chapati",
-            quantity:5
-        },
-        {
-            food:"Rice",
-            quantity:3
-        },
-        {
-            food:"Vegetable",
-            quantity:5
-        }
-    ],
-    address:{
-        addressLine1:"141, North Eastern Peninsula",
-        addressLine2:"Western Lane",
-        city:"Racoonwall",
-        state:"Zooland",
-        postalCode:"K13497",
-        country:"Animal Planet"
-    }
-}
-
-]
 
 class Profile extends Component {
     constructor(props){
@@ -149,6 +51,9 @@ class Profile extends Component {
             addressState:"",
             postalCode:"",
             country:"",
+            stateList:[],
+            cityList:[],
+            address:[],
             loaded:false,
             errors:{
                 username: "",
@@ -156,12 +61,7 @@ class Profile extends Component {
                 password:"",
                 contact: "",
                 image:"",
-                addressLine1:"",
-                addressLine2:"",
-                city:"",
-                addressState:"",
-                postalCode:"",
-                country:"",
+                addressError:""
             }
         }
         
@@ -174,7 +74,6 @@ class Profile extends Component {
             loaded:true,
             userId:authId
         });
-        // console.log(authId);
     }
     
 	activateNeed = (e)=>{
@@ -265,12 +164,42 @@ class Profile extends Component {
         }	
 		
 	}
-    selectCountry = (val)=>{
-        this.setState({ country: val });
-    };
-    selectState= (val)=>{
-        this.setState({ addressState: val });
+    handleCountryChange = value=>{
+        let states = State.getStatesOfCountry(value.country_code);
+        let newStateList = []
+        for(var i=0;i<states.length;i++){
+            var obj = {label:states[i].name, value:states[i].name, state_code:states[i].isoCode, country_code:states[i].countryCode}
+            newStateList.push(obj);   
+        }
+        this.setState({
+            country:value,
+            countryCode:value.country_code,
+            stateList: newStateList,
+            addressState:"",
+            city:""
+        })
     }
+    handleAddressStateChange = value =>{
+        let cities = City.getCitiesOfState(value.country_code, value.state_code);
+        let newCityList = [];
+        for(var i=0;i<cities.length;i++){
+            var obj = {label:cities[i].name, value:cities[i].name, state_code:cities[i].stateCode, country_code:cities[i].countryCode}
+            newCityList.push(obj);   
+        }
+        this.setState({
+            addressState:value,
+            cityList: newCityList,
+            city:""
+        })
+    }
+
+    handleCityChange = value =>{
+        this.setState({
+            city:value
+        })
+
+    }
+
     userProfileValidation = (data)=>{
         const {username,email,password,contact,image} = data;
         let error=false, emailError="", passwordError="", usernameError="", imageError="", contactError="";
@@ -278,8 +207,8 @@ class Profile extends Component {
             emailError = "Email address is Invalid";
             error= true;
         }
-        if(password.length>0&&password.length<5){
-            passwordError="Length of password must be 5 characters or more"
+        if(password.length>0&&password.length<6){
+            passwordError="Length of password must be 6 characters or more"
             error= true;
         }
 		if(username&&!username.trim()){
@@ -336,6 +265,12 @@ class Profile extends Component {
             }
         }
     }
+    isValidAddress = (address)=>{
+        const {city, state, country} = address;
+        if(city&&state&&country) return true;
+        if(city||state||country) return false;
+        return true;
+    }
 
     handleAddressUpdate = async(e)=>{
         e.preventDefault();
@@ -346,11 +281,29 @@ class Profile extends Component {
         if(addressLine1||addressLine2||city||addressState||postalCode||country){
             for (const property in data) {
                 if(`${data[property]}`){
-                    if(`${property}`==='addressState'){
-                        address['state'] = `${data[property]}`;
-                    }else
+                    if(`${property}`==='city'){
+                        address['city'] = city;
+                        continue;
+                    }else if(`${property}`==='addressState'){
+                        address['state'] = addressState.value;
+                        continue;
+                    }
+                    if(`${property}`==='country'){
+                        address[`${property}`] = `${data[property].value}`;
+                    }else{
                         address[`${property}`] = `${data[property]}`;
+                    }
                 }
+            }
+            if(!this.isValidAddress(address)){
+                this.setState({
+                    errors:{addressError:"City, State, Country: all three fields must be filled together"}
+                })
+                return;
+            }else{
+                this.setState({
+                    errors:{addressError:""}
+                })
             }
             await this.props.updateAddress(address);
             if(this.props.user_form_updates.message){
@@ -370,7 +323,7 @@ class Profile extends Component {
                >
             <ModalHeader style={{backgroundColor: 'darkgray'}} toggle={() => this.changeProfileModalState()}>Update Profile</ModalHeader>
             <ModalBody>
-				<div className="invalid__feedback user__notice">**Please fill only those fields that you want to update</div>
+				<div className="invalid__feedback user__notice">**Please fill only those fields that you want to update</div><br/>
                 <Form encType="multipart/formdata">
                 <Row>
                             <Col md={6}>
@@ -433,6 +386,7 @@ class Profile extends Component {
             <ModalHeader style={{backgroundColor: 'darkgray'}} toggle={() => this.changeAddressModalState()}>Update Address</ModalHeader>
             <ModalBody>
 				<div className="invalid__feedback user__notice">**Please fill only those fields that you want to update</div>
+                <div className="invalid__feedback user__notice">* If you want to modify any field from  Country, state or city, then you must fill all three of them.</div>
                 <Form encType="multipart/formdata">
                     <Form.Group controlId="user__address--1">
                         <Form.Label><span className="form__icon"><FaAddressCard/></span>Address Line 1</Form.Label>
@@ -446,40 +400,38 @@ class Profile extends Component {
                     </Form.Group>
 
                     <Row>
-                        <Col md={6}>
-                            <Form.Group controlId="user__city">
-                                <Form.Label><span className="form__icon"><FaCity/></span>City</Form.Label>
-                                <input name="city" className="form-control" type="text" value={this.state.city} placeholder="Enter city" onChange={this.handleInputChange} />
-                                <div className="invalid__feedback">{this.state.errors.addressCity}</div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group controlId="user__zip">
-                                <Form.Label><span className="form__icon"><GiMailbox/></span>Postal Code</Form.Label>
-                                <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
-                                <div className="invalid__feedback">{this.state.errors.postalCode}</div>
-                            </Form.Group>        
-                        </Col>
-                    </Row>
+                            <Col md={6}>
+                                <Form.Group controlId="user__country">
+                                    <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
+                                    <Select name="country" options={countryList} className="basic-multi-select" value={this.state.country} onChange={this.handleCountryChange} classNamePrefix="select" placeholder="Select Country"/>
+                                </Form.Group>        
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="user__state">
+                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> State</Form.Label>
+                                    <Select name="addressState" options={this.state.stateList} className="basic-multi-select" value={this.state.addressState} onChange={this.handleAddressStateChange} classNamePrefix="select" placeholder="Select State"/>
+                                </Form.Group>        
+                            </Col>
+                        </Row>
 
-                    <Row>
-                        <Col md={6}>
-                            <Form.Group controlId="user__country">
-                                <Form.Label><span className="form__icon"><FaGlobeAmericas/></span>Country</Form.Label>
-                                <CountryDropdown value={this.state.country} className="form-control" onChange={(val) => this.selectCountry(val)} required/>
-                                <div className="invalid__feedback">{this.state.errors.country}</div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group controlId="user__state">
-                                <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span>State</Form.Label>
-                                {/* <input name="addressState" className="form-control" type="text" value={this.state.addressState} placeholder="Enter state" onChange={this.handleInputChange} /> */}
-                                <RegionDropdown blankOptionLabel="Select a country first" defaultOptionLabel="Select a region" className="form-control" 
-                                            country={this.state.country} value={this.state.addressState} onChange={this.selectState}/>
-                                <div className="invalid__feedback">{this.state.errors.addressState}</div>
-                            </Form.Group>        
-                        </Col>
-                    </Row>
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group controlId="user__city">
+                                    <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">*</span> City</Form.Label>
+                                    <Select name="city" options={this.state.cityList} className="basic-multi-select" value={this.state.city} onChange={this.handleCityChange} classNamePrefix="select" placeholder="Select City"/>
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="user__zip">
+                                    <Form.Label><span className="form__icon"><GiMailbox/></span> Postal Code</Form.Label>
+                                    <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
+                                    <div className="invalid__feedback">{this.state.errors.postalCode}</div>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <div className="invalid__feedback" style={{marginLeft:'1rem'}}>{this.state.errors.addressError}</div>
+                        </Row>
                 </Form>
             </ModalBody>
             <ModalFooter style={{backgroundColor: 'lightgray'}}>
@@ -519,7 +471,7 @@ class Profile extends Component {
                                     <div>
                                         <p><span className="profile__header--icon"><FaBuilding/></span>
                                             {userAddress.addressLine1}, {userAddress.addressLine2},<br/>
-                                            {userAddress.city}, {userAddress.state}, {userAddress.postalCode}, {userAddress.country}
+                                            {userAddress.city.value}, {userAddress.state}, {userAddress.postalCode}, {userAddress.country}
                                         </p>
                                     </div>
                                     <div>
