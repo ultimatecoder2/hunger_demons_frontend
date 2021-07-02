@@ -2,7 +2,7 @@ import {record} from '../apis/feed_needy';
 import {signUp, signIn, signOut, forgetPassword, resetPassword} from './auth'
 import {addOrganization, fetchOrganizations} from './organizations'
 import {addRequest, fetchRequests, fetchUserRequests, deleteFoodRequest} from './requests'
-import {updateProfile, updateAddress, fetchProfile} from './user';
+import {updateProfile, updateAddress, fetchProfile, getUserDetails} from './user';
 //User Requests
 
 
@@ -22,6 +22,7 @@ export {fetchOrganizations}
 export {updateProfile};
 export {updateAddress};
 export {fetchProfile};
+export {getUserDetails};
 
 //Food Requestss
 export {addRequest};
