@@ -350,41 +350,6 @@ class DonateFood extends Component{
                         <input name="addressLine2" className="form-control" type="text" value={this.state.addressLine2} placeholder="Enter landmark" onChange={this.handleInputChange} />
                     </Form.Group>
 
-                    {/* <Row>
-                        <Col md={6}>
-                            <Form.Group controlId="user__city">
-                                <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">*</span> City</Form.Label>
-                                <input name="city" className="form-control" type="text" value={this.state.city} placeholder="Enter city" onChange={this.handleInputChange} />
-                                <div className="invalid__feedback">{this.state.errors.city}</div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group controlId="user__zip">
-                                <Form.Label><span className="form__icon"><GiMailbox/></span><span className="label__important">*</span> Postal Code</Form.Label>
-                                <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
-                                <div className="invalid__feedback">{this.state.errors.postalCode}</div>
-                            </Form.Group>       
-                        </Col>
-                    </Row>
-
-                    <Row>
-                        <Col md={6}>
-                            <Form.Group controlId="user__country">
-                                <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
-                                <CountryDropdown value={this.state.country} className="form-control" onChange={(val) => this.selectCountry(val)} required/>
-                                <div className="invalid__feedback">{this.state.errors.country}</div>
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                            <Form.Group controlId="user__state">
-                                <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> Region</Form.Label>
-                                <RegionDropdown blankOptionLabel="Select a country first" defaultOptionLabel="Select a region" className="form-control" 
-                                    country={this.state.country} value={this.state.addressState} onChange={this.selectState}/>
-                                <div className="invalid__feedback">{this.state.errors.addressState}</div>
-                            </Form.Group>        
-                        </Col>
-                    </Row> */}
-
                     <Row>
                             <Col md={6}>
                                 <Form.Group controlId="user__country">
