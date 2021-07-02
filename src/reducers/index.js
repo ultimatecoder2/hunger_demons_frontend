@@ -8,6 +8,7 @@ import needRequests from './needRequest';
 import organizations from './organizations';
 import profile from './profile';
 import resetPassword from './resetPassword';
+import userProfile from './userProfile';
 
 export default combineReducers({
     auth:authReducer,
@@ -18,5 +19,6 @@ export default combineReducers({
     donateRequests, 
     organizations,
     profile,
-    resetPassword
+    resetPassword,
+    userProfile
 });
