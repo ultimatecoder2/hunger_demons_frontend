@@ -4,7 +4,7 @@ import { FadeTransform } from 'react-animation-components';
 import {Link} from 'react-router-dom';
 import {AiOutlineMail} from 'react-icons/ai';
 import {FiPhoneCall} from 'react-icons/fi';
-import {FaAddressCard} from 'react-icons/fa';
+import {FaAddressCard, FaUserAlt} from 'react-icons/fa';
 import {ImCalendar, ImBin} from 'react-icons/im';
 
 const renderFoodDescription = (foodDescription)=>{
@@ -24,16 +24,6 @@ const renderAddress = (address) =>{
     
 }
 
-// const renderAuthButtons = (data)=>{
-//     return(
-//         <div className="mt-2 card__buttons" >
-//             <button className="col-xs-5 card__button--bottom btn__edit">Edit Request</button>
-//             <button className="col-xs-5 card__button--bottom btn__delete">Delete Request</button>
-//         </div>
-//     )
-
-// }
-
 export const renderCard = function(props){
     const FoodDetail = props.post;
     let {val, authId}= props;
@@ -43,7 +33,6 @@ export const renderCard = function(props){
         isAuth = true;
     foodType = foodType[0]
     address = address[0]
-    
 
     return(
     <div className='request__card' key={val}>
@@ -56,6 +45,9 @@ export const renderCard = function(props){
                     <div><span className="request__card--icon"><ImCalendar/></span>
                     {new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(Date.parse(FoodDetail.updatedAt)))}</div>
                     <div >{renderAddress(address)}</div>
+                    <div><span className="request__card--icon"><FaUserAlt/></span>
+                        <Link to={`/user_profile/${owner}`}>Appealer's Profile</Link>
+                    </div>
                 </div>
             </Card.Body>
             
@@ -63,10 +55,9 @@ export const renderCard = function(props){
             <Card.Body>
                 {renderFoodDescription(food_description)}
             </Card.Body>
-            <Card.Footer>
+            {/* <Card.Footer>
                 <div className="request__card--btn"><Button className='col-10'><span className=''/>View</Button></div>
-                {/* {isAuth && renderAuthButtons(val)} */}
-            </Card.Footer>
+            </Card.Footer> */}
         </Card>
     </FadeTransform>
     <p></p>
