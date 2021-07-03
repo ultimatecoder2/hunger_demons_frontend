@@ -6,17 +6,25 @@ import './pickup.css';
 import {renderCard} from './request_cards.js'
 import {toast, ToastContainer} from 'react-toastify';
 import {foodTypes} from '../../variables';
-import {fetchRequests, deleteFoodRequest} from '../../actions/index'
+import {fetchRequests, deleteFoodRequest, getUserDetails} from '../../actions/index'
 import FloatingLabelInput from 'react-floating-label-input';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import {GiKnifeFork, GiMailbox} from 'react-icons/gi';
+import Select from 'react-select';
+import { State, City }  from 'country-state-city';
+import {FaCity, FaMapMarkedAlt} from 'react-icons/fa';
 
 class NeedRequest extends Component {
     constructor(props){
         super(props);
         this.state = {
             foodtype:"",
+            userCity:"",
+            userState:"",
+            cityList:[],
+            stateList:[],
             city:"",
-            state:"",
+            addressState:"",
             country:"",
             postalCode:"",
             limit:12,
@@ -27,8 +35,26 @@ class NeedRequest extends Component {
         }
     }
 
+    componentDidMount = async()=>{
+        if(this.props.auth.isSignedIn){
+            await this.getUserData();
+        }
+        await this.fetchData();
+    }
+
     notifyFail = (message) => toast.error(message);
     notifySuccess = (message) => toast.success(message);
+
+    //API calling
+    getUserData = async()=>{
+        await this.props.getUserDetails();
+        if(this.props.userProfile.profile){
+            let address = this.props.userProfile.profile.address[0]
+            this.setState({
+                userCity: address.city
+            }, ()=>{this.setStateList(this.state.userCity)})
+        }
+    }
 
     fetchData = async()=>{
         if(!this.state.hasMore) return;
@@ -38,7 +64,6 @@ class NeedRequest extends Component {
         await this.props.fetchRequests(apiData);
         if(this.props.food_Requests.message==="Success"){
             let newData = this.props.food_Requests.data.foodRequest;
-            console.log("hello there", newData);
             if(newData&& newData.length>0){
                 var hasMoreNew;
                 if(newData.length<limit){
@@ -54,55 +79,6 @@ class NeedRequest extends Component {
             }else{
                 this.setState({hasMore:false})
             }
-        }
-    }
-    componentDidMount = async()=>{
-        await this.fetchData();
-    }
-    
-    handleMultiSelectChange = foodtype => {
-        this.setState({ foodtype });
-    }
-
-    handleInputChange = (event)=>{
-        const target = event.target;
-        const name = target.name;
-        this.setState({
-          [name]: event.target.value
-        });
-    }
-
-    handleFloatingInput = (event)=>{
-        const target = event.target;
-        const val = target.value;
-        const label= target.id;
-        this.setState({
-            [label]:val
-        })
-    }
-    
-    filterFormValidation = ()=>{
-        const {city, postalCode} = this.state;
-        let error=false;
-        if(!city.trim()&&!postalCode.trim()){
-            error = true;
-            this.setState({
-                formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
-            })
-        }else{
-            this.setState({
-                formError:""
-            })
-        }
-        return !error;
-    }
-    handleFilterButton = (e)=>{
-        console.log(e);
-        e.preventDefault();
-        const isValid = this.filterFormValidation();
-        if(isValid){
-            // this.fetchPosts();
-            console.log("Valid");
         }
     }
 
@@ -125,8 +101,82 @@ class NeedRequest extends Component {
         }
     }
     
+
+    //Form Input handlers
+    
+    handleMultiSelectChange = foodtype => {
+        this.setState({ foodtype });
+    }
+
+    handleInputChange = (event)=>{
+        const target = event.target;
+        const name = target.name;
+        this.setState({
+          [name]: event.target.value
+        });
+    }
+
+    handleAddressStateChange = value =>{
+        let cities = City.getCitiesOfState(value.country_code, value.state_code);
+        let newCityList = [];
+        for(var i=0;i<cities.length;i++){
+            var obj = {label:cities[i].name, value:cities[i].name, state_code:cities[i].stateCode, country_code:cities[i].countryCode}
+            newCityList.push(obj);   
+        }
+        this.setState({
+            addressState:value,
+            cityList: newCityList,
+            city:""
+        })
+    }
+
+    handleCityChange = value =>{
+        this.setState({
+            city:value,
+            data:[],
+            hasMore:true
+        }, this.fetchData)
+
+    }
+
+    setStateList = value=>{
+        //value contains city of the user.
+        let states = State.getStatesOfCountry(value.country_code);
+        let newStateList = []
+        for(var i=0;i<states.length;i++){
+            var obj = {label:states[i].name, value:states[i].name, state_code:states[i].isoCode, country_code:states[i].countryCode}
+            newStateList.push(obj);   
+        }
+        this.setState({
+            stateList: newStateList,
+            addressState:"",
+            city:""
+        })
+    }
+
+    resetFilterButton = (e) =>{
+        e.preventDefault();
+        this.setState({
+            foodTypeFilter:"",
+            postalCode:"",
+            city:"",
+            addressState:"",
+            hasMore:true
+        }, this.fetchData)
+    }
+
+
+    //rendering
+    
     renderRequests = ()=>{
-        const posts = this.state.data;
+        let posts = this.state.data;
+        if(this.state.postalCode || this.state.foodTypeFilter){
+            posts = posts.filter((post) => {
+                return(
+                    ((this.state.foodTypeFilter&&post.foodType.includes(this.state.foodTypeFilter.value))||(this.state.postalCode&&post.address[0].postalCode.startsWith(this.state.postalCode)))
+                )
+            });
+        }
         if(posts&&posts.length>0){
             return posts.map((post,  key)=>{
                 return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
@@ -151,34 +201,45 @@ class NeedRequest extends Component {
                         </div>
                         <div className="search__section">
                             <h3 className="filters__heading"> Filter results</h3>
-                            {/* Food type, address->[city, postal, state, maxQuantity] */}
+
                             <Form.Group as={Row} controlId="food__type">
                                 <Col md={6}>
-                                    <FloatingLabelInput
-                                        id="city"
-                                        className="floating_input"
-                                        label="Enter City"
-                                        onChange={this.handleFloatingInput}
-                                        value={this.state.city}
-                                    />
+                                <Form.Group controlId="food__type">
+                                    <Form.Label><span className="form__icon"><GiKnifeFork/></span>Food Type</Form.Label>
+                                    <div>
+                                        <Select name="foodtype" options={foodTypes} className="basic-multi-select" value={this.state.foodTypeFilter} onChange={this.handlefoodTypeChange} classNamePrefix="select" placeholder="Select food type"/>
+                                    </div>
+                                </Form.Group>
                                 </Col>
-                                <Col md={6}>
-                                    <FloatingLabelInput
-                                        id="postalCode"
-                                        className="floating_input"
-                                        label="Enter Postal Code"
-                                        onChange={this.handleFloatingInput}
-                                        value={this.state.postalCode}
-                                    />
-                                </Col>
-                                <div className="invalid__feedback">{this.state.formError}</div>
-                            </Form.Group>
-                            <div style={{textAlign:'right'}}>
-                                <button className="filter__button reset_filter_btn"  onClick={this.resetFilterButton}>Reset Filter</button>   
-                                <button className="filter__button apply_filter_btn" onClick={this.handleFilterButton}>Search Requests</button>
                                 
-                            </div>    
+                                <Col md={6}>
+                                    <Form.Group controlId="user__zip">
+                                    <Form.Label><span className="form__icon"><GiMailbox/></span><span className="label__important">*</span> Postal Code</Form.Label>
+                                    <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
+                                </Form.Group>
+                                </Col>
+
+                                <Col md={6}>
+                                <Form.Group controlId="user__state">
+                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">**</span> State</Form.Label>
+                                    <Select name="addressState" options={this.state.stateList} className="basic-multi-select" value={this.state.addressState} onChange={this.handleAddressStateChange} classNamePrefix="select" placeholder="Select State"/>
+                                </Form.Group>        
+                                </Col>
+
+                                <Col md={6}>
+                                <Form.Group controlId="user__city">
+                                    <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">**</span> City</Form.Label>
+                                    <Select name="city" options={this.state.cityList} className="basic-multi-select" value={this.state.city} onChange={this.handleCityChange} classNamePrefix="select" placeholder="Select City"/>
+                                </Form.Group>
+                                </Col>
+                            </Form.Group>
+                    
+                            <div style={{textAlign:'right'}}>   
+                                <button className="filter__button reset_filter_btn"  onClick={this.resetFilterButton}>Reset Filter</button>   
+                            </div> 
+                            <div className="invalid__feedback">** To apply State or City filter both 'State' and 'City' fields must be filled</div>   
                         </div>
+
 
                         <div className="requests__content">
                             <InfiniteScroll 
@@ -205,9 +266,10 @@ const mapStateToProps = (state, ownProps)=>{
         ...ownProps,
         food_Requests: state.needRequests,
         auth:state.auth,
-        foodRequestConfirmation: state.foodRequest 
+        foodRequestConfirmation: state.foodRequest,
+        userProfile: state.userProfile 
     })
 
 }
 
-export default connect(mapStateToProps,{fetchRequests, deleteFoodRequest})(NeedRequest);
+export default connect(mapStateToProps,{fetchRequests, deleteFoodRequest, getUserDetails})(NeedRequest);

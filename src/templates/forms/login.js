@@ -76,7 +76,6 @@ class login extends Component{
         const isValid = this.validateForm(this.state);
         if(isValid){
             const {email,password} = this.state;
-            console.log({email,password});
             await this.props.signIn({email, password});
 
             if(this.props.auth.error){
