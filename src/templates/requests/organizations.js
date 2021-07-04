@@ -1,20 +1,34 @@
+// library imports
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
-import FormHeader from'../header/form__header';
-import {Container, Row, Col,Form} from 'react-bootstrap';
-import './pickup.css';
-import {renderOrgCard} from './request_cards.js';
-import {fetchOrganizations} from '../../actions/index';
-import FloatingLabelInput from 'react-floating-label-input';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Select from 'react-select';
+import { State, City }  from 'country-state-city';
+import {FaCity, FaMapMarkedAlt} from 'react-icons/fa';
+import {GiKnifeFork, GiMailbox} from 'react-icons/gi';
+import {Container, Row, Col,Form} from 'react-bootstrap';
+
+//manual imports
+import FormHeader from'../header/form__header';
+import {renderOrgCard} from './request_cards.js';
+import {foodTypes} from '../../variables';
+
+//api endpoints
+import {fetchOrganizations, getUserDetails} from '../../actions/index';
+
+//css
+import './pickup.css';
 
 class Organizaitons extends Component {
     constructor(props){
         super(props);
         this.state = {
             foodtype:"",
+            foodTypeFilter:"",
+            cityList:[],
+            stateList:[],
             city:"",
-            state:"",
+            addressState:"",
             country:"",
             postalCode:"",
             data:[],
@@ -24,6 +38,14 @@ class Organizaitons extends Component {
             }
     }
 
+    componentDidMount = async()=>{
+        if(this.props.auth.isSignedIn){
+            await this.getUserData();
+        }
+        await this.fetchData();
+    }
+
+    //apis
     fetchData = async()=>{
         if(!this.state.hasMore) return;
         let { data, limit, requestType, city, state, country, postalCode}= this.state;
@@ -50,13 +72,23 @@ class Organizaitons extends Component {
         }
     }
 
-    componentDidMount = async()=>{
-        await this.fetchData();
+    getUserData = async()=>{
+        await this.props.getUserDetails();
+        if(this.props.userProfile.profile){
+            let address = this.props.userProfile.profile.address[0]
+            this.setState({
+                userCity: address.city
+            }, ()=>{this.setStateList(this.state.userCity)})
+        }
     }
+
     
+
+
+    // input handlers 
     
-    handleMultiSelectChange = foodtype => {
-        this.setState({ foodtype });
+    handlefoodTypeChange = foodtype => {
+        this.setState({ foodTypeFilter: foodtype });
     }
 
     handleInputChange = (event)=>{
@@ -67,41 +99,68 @@ class Organizaitons extends Component {
         });
     }
 
-    handleFloatingInput = (event)=>{
-        const target = event.target;
-        const val = target.value;
-        const label= target.id;
+    handleAddressStateChange = value =>{
+        let cities = City.getCitiesOfState(value.country_code, value.state_code);
+        let newCityList = [];
+        for(var i=0;i<cities.length;i++){
+            var obj = {label:cities[i].name, value:cities[i].name, state_code:cities[i].stateCode, country_code:cities[i].countryCode}
+            newCityList.push(obj);   
+        }
         this.setState({
-            [label]:val
+            addressState:value,
+            cityList: newCityList,
+            city:""
         })
     }
 
-    filterFormValidation = ()=>{
-        const {city, postalCode} = this.state;
-        let error=false;
-        if(!city.trim()&&!postalCode.trim()){
-            error = true;
-            this.setState({
-                formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
-            })
-        }else{
-            this.setState({
-                formError:""
-            })
-        }
-        return !error;
+    handleCityChange = value =>{
+        this.setState({
+            city:value,
+            data:[],
+            hasMore:true
+        }, this.fetchData)
+
     }
 
-    handleFilterButton = (e)=>{
-        e.preventDefault();
-        const isValid = this.filterFormValidation();
-        if(isValid){
-            this.fetchOrg();
+    setStateList = value=>{
+        let states = State.getStatesOfCountry(value.country_code);
+        let newStateList = []
+        for(var i=0;i<states.length;i++){
+            var obj = {label:states[i].name, value:states[i].name, state_code:states[i].isoCode, country_code:states[i].countryCode}
+            newStateList.push(obj);   
         }
+        this.setState({
+            stateList: newStateList,
+            addressState:"",
+            city:""
+        })
+    }
+
+    resetFilterButton = (e) =>{
+        e.preventDefault();
+        this.setState({
+            foodTypeFilter:"",
+            postalCode:"",
+            city:"",
+            addressState:"",
+            hasMore:true
+        }, this.fetchData)
     }
     
+    
+    //rendering
+
     renderRequests = ()=>{
-        const organizations = this.state.data;
+        let organizations = this.state.data;
+        console.log(organizations);
+        if(this.state.postalCode || this.state.foodTypeFilter){
+            organizations = organizations.filter((organization) => {
+                
+                return(
+                    ((this.state.foodTypeFilter&&organization.foodType.includes(this.state.foodTypeFilter.value))||(this.state.postalCode&&organization.address[0].postalCode.startsWith(this.state.postalCode)))
+                )
+            });
+        }
         if(organizations&&organizations.length>0){
             return organizations.map((post,  key)=>{
                 return renderOrgCard({post,val:key})
@@ -125,35 +184,44 @@ class Organizaitons extends Component {
                         </div>
                         <div className="search__section">
                             <h3 className="filters__heading"> Filter results</h3>
-                            {/* Food type, address->[city, postal, state, maxQuantity] */}
+    
                             <Form.Group as={Row} controlId="food__type">
                                 <Col md={6}>
-                                    <FloatingLabelInput
-                                        id="city"
-                                        className="floating_input"
-                                        label="Enter City"
-                                        onChange={this.handleFloatingInput}
-                                        value={this.state.city}
-                                    />
+                                <Form.Group controlId="food__type">
+                                    <Form.Label><span className="form__icon"><GiKnifeFork/></span>Food Type</Form.Label>
+                                    <div>
+                                        <Select name="foodtype" options={foodTypes} className="basic-multi-select" value={this.state.foodTypeFilter} onChange={this.handlefoodTypeChange} classNamePrefix="select" placeholder="Select food type"/>
+                                    </div>
+                                </Form.Group>
                                 </Col>
+                                
                                 <Col md={6}>
-                                    <FloatingLabelInput
-                                        id="postalCode"
-                                        className="floating_input"
-                                        label="Enter Postal Code"
-                                        onChange={this.handleFloatingInput}
-                                        value={this.state.postalCode}
-                                    />
+                                    <Form.Group controlId="user__zip">
+                                    <Form.Label><span className="form__icon"><GiMailbox/></span><span className="label__important">*</span> Postal Code</Form.Label>
+                                    <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
+                                </Form.Group>
                                 </Col>
-                                <div className="invalid__feedback">{this.state.formError}</div>
+
+                                <Col md={6}>
+                                <Form.Group controlId="user__state">
+                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">**</span> State</Form.Label>
+                                    <Select name="addressState" options={this.state.stateList} className="basic-multi-select" value={this.state.addressState} onChange={this.handleAddressStateChange} classNamePrefix="select" placeholder="Select State"/>
+                                </Form.Group>        
+                                </Col>
+
+                                <Col md={6}>
+                                <Form.Group controlId="user__city">
+                                    <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">**</span> City</Form.Label>
+                                    <Select name="city" options={this.state.cityList} className="basic-multi-select" value={this.state.city} onChange={this.handleCityChange} classNamePrefix="select" placeholder="Select City"/>
+                                </Form.Group>
+                                </Col>
                             </Form.Group>
-                            
-                            
                             
                             <div style={{textAlign:'right'}}>   
                                 <button className="filter__button reset_filter_btn"  onClick={this.resetFilterButton}>Reset Filter</button>   
-                                <button className="filter__button apply_filter_btn" onClick={this.handleFilterButton}>Search Requests</button>
-                            </div>    
+                            </div> 
+                            <div className="invalid__feedback">** To apply State or City filter both 'State' and 'City' fields must be filled</div>
+
                         </div>
 
                         <div className="requests__content">
@@ -178,9 +246,11 @@ class Organizaitons extends Component {
 const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
-        orgs:state.organizations
+        orgs:state.organizations,
+        auth:state.auth,
+        userProfile: state.userProfile 
     })
 
 }
 
-export default connect(mapStateToProps,{fetchOrganizations})(Organizaitons);
+export default connect(mapStateToProps,{fetchOrganizations, getUserDetails })(Organizaitons);
