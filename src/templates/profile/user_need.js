@@ -1,11 +1,7 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
-import FormHeader from'../header/form__header';
-import {Container, Row, Col, Image,Button,Form,Card,CardDeck} from 'react-bootstrap';
-import Select from 'react-select'
 import '../requests/pickup.css';
 import {renderCard} from '../requests/request_cards.js'
-import {foodTypes} from '../../variables';
 import {toast, ToastContainer} from 'react-toastify';
 import {fetchUserRequests, deleteFoodRequest} from '../../actions/index'
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -25,64 +21,63 @@ class UserNeeds extends Component {
             posts:"",
             formError:"",
             hasMore: true,
-            data:[]
+            data:[],
+            userId:""
         }
     }
-    // fetchNextPosts = async ()=>{
-    //     console.log(this.props);
-    //     const {owner} = this.props;
-    //     let {pageNo, limit, tCount, requestType, city, state, country, postalCode}= this.state;
-    //     const skip = (pageNo)*limit;
-    //     let data = {Limit:limit, Skip:skip, requestType, city, state, country, postalCode, owner}
-    //     await this.props.fetchUserRequests(data);
-    //     if(this.props.food_Requests.message==="Success"){
-    //         this.setState({
-    //             tCount:this.props.food_Requests.data.count,
-    //             posts: this.props.food_Requests.data.foodRequest,
-    //             isLast:((skip+limit)>=this.props.food_Requests.data.count),
-    //             pageNo: this.state.pageNo+1
-    //         })
-    //     }
-    // }
 
-    // fetchPrevPosts = async()=>{
-    //     const {owner} = this.props;
-    //     let {pageNo, limit, tCount, requestType, city, state, country, postalCode}= this.state;
-    //     if(pageNo<=1)
-    //         return;
-    //     const skip = (pageNo-2)*limit;
-    //     let data = {Limit:limit, Skip:skip, requestType, city, state, country, postalCode, owner}
-    //     await this.props.fetchUserRequests(data);
-    //     if(this.props.food_Requests.message==="Success"){
-    //         this.setState({
-    //             tCount:this.props.food_Requests.data.count,
-    //             posts: this.props.food_Requests.data.foodRequest,
-    //             isLast:((skip+limit)>=this.props.food_Requests.data.count),
-    //             pageNo: this.state.pageNo-1
-    //         })
-    //     }
+    componentDidMount = async()=>{
+        this.setState({userId: this.props.owner}, this.fetchData)
+    }
+    
+    componentDidUpdate =async()=>{
+        if(this.state.userId!=="" && this.props.owner !== this.state.userId){
+            this.setState({userId: this.props.owner, data:[], hasMore:true}, this.fetchData)
+        }
+    }
 
-    // }
+    notifyFail = (message) => toast.error(message);
+    notifySuccess = (message) => toast.success(message);
+    
+    // input handlers
+    handleMultiSelectChange = foodtype => {
+        this.setState({ foodtype });
+    }
 
-    // fetchPosts = async()=>{
-    //     const {owner} = this.props;
-    //     const {pageNo, limit, requestType, city, state, country, postalCode}= this.state;
-    //     let data = {Limit:limit, Skip:0, requestType, city, state, country, postalCode, owner}
-    //     await this.props.fetchUserRequests(data);
-    //     if(this.props.food_Requests.message==="Success"){
-    //         this.setState({
-    //             tCount:this.props.food_Requests.data.count,
-    //             posts: this.props.food_Requests.data.foodRequest,
-    //             pageNo:1,
-    //             isLast:(limit>=this.props.food_Requests.data.count)
+    handleInputChange = (event)=>{
+        const target = event.target;
+        const name = target.name;
+        this.setState({
+          [name]: event.target.value
+        });
+    }
 
-    //         })
-    //     }
-    // }
+    // apis
+
+    deleteFoodPost = async(id)=>{
+        await this.props.deleteFoodRequest({id})
+        console.log(id)
+        if(this.props.foodRequestConfirmation.error){
+            this.notifyFail(this.props.foodRequestConfirmation.error);
+        }else if(this.props.foodRequestConfirmation.message){
+            this.notifySuccess(this.props.foodRequestConfirmation.message);
+            let data = this.state.data
+            let newData = [];
+            for(var i=0;i<data.length;i++){
+                if(data[i]._id !== id){
+                    newData.push(data[i]);
+                }
+            }
+            this.setState({
+                data: newData,
+            }, this.fetchData)
+            
+        }
+    }
 
     fetchData = async()=>{
-        if(!this.state.hasMore) return;
-        const {owner} = this.props;
+        if(!this.state.hasMore|| !this.state.userId) return;
+        const owner = this.state.userId;
         let { data, limit, requestType, city, state, country, postalCode}= this.state;
         const skip = data.length;
         let apiData = {Limit:limit, Skip:skip, requestType, city, state, country, postalCode, owner}
@@ -107,87 +102,7 @@ class UserNeeds extends Component {
         }
     }
 
-
-    componentDidMount = async()=>{
-        await this.fetchData();
-    }
-    notifyFail = (message) => toast.error(message);
-    notifySuccess = (message) => toast.success(message);
-    
-    // nextPage = async(e)=>{
-    //     console.log("Next btn click")
-    //     e.preventDefault();
-    //     const {tCount, pageNo, limit} = this.state;
-    //     if(tCount>pageNo*limit){
-    //         this.fetchNextPosts();
-    //     }
-    // }
-
-    // prevPage = async(e)=>{
-    //     console.log("back btn click")
-    //     e.preventDefault();
-    //     const {tCount, pageNo, limit} = this.state;
-    //     if(pageNo>1){
-    //         this.fetchPrevPosts();
-    //     }
-    // }
-
-    deleteFoodPost = async(id)=>{
-        await this.props.deleteFoodRequest({id})
-        console.log(id)
-        if(this.props.foodRequestConfirmation.error){
-            this.notifyFail(this.props.foodRequestConfirmation.error);
-        }else if(this.props.foodRequestConfirmation.message){
-            this.notifySuccess(this.props.foodRequestConfirmation.message);
-            let data = this.state.data
-            let newData = [];
-            for(var i=0;i<data.length;i++){
-                if(data[i]._id !== id){
-                    newData.push(data[i]);
-                }
-            }
-            this.setState({
-                data: newData,
-            }, this.fetchData)
-            
-        }
-    }
-    
-    handleMultiSelectChange = foodtype => {
-        this.setState({ foodtype });
-    }
-
-    handleInputChange = (event)=>{
-        const target = event.target;
-        const name = target.name;
-        this.setState({
-          [name]: event.target.value
-        });
-    }
-
-    filterFormValidation = ()=>{
-        const {city, postalCode} = this.state;
-        let error=false;
-        if(!city&&!postalCode.trim()){
-            error = true;
-            this.setState({
-                formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
-            })
-        }else{
-            this.setState({
-                formError:""
-            })
-        }
-        return !error;
-    }
-
-    handleFilterButton = (e)=>{
-        e.preventDefault();
-        const isValid = this.filterFormValidation();
-        if(isValid){
-            this.fetchPosts();
-        }
-    }
+    //rendering
     
     renderRequests = ()=>{
         const posts = this.state.data;
