@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
-import FormHeader from'../header/form__header';
-import {Container, Row, Col, Image,Button,Form,Card,CardDeck} from 'react-bootstrap';
-import Select from 'react-select'
 import '../requests/pickup.css';
 import {renderCard} from '../requests/request_cards.js'
-import {foodTypes} from '../../variables';
-import {GiKnifeFork} from 'react-icons/gi';
-import {toast, ToastContainer} from 'react-toastify';
+import {toast} from 'react-toastify';
 import {fetchUserRequests, deleteFoodRequest} from '../../actions/index'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -25,13 +20,14 @@ class UserDonations extends Component {
             formError:"",
             isLast:false,
             hasMore: true,
-            data:[]
+            data:[],
+            userId:""
         }
     }
 
     fetchData = async()=>{
         if(!this.state.hasMore) return;
-        const {owner} = this.props;
+        const owner = this.state.userId;
         let { data, limit, requestType, city, state, country, postalCode}= this.state;
         const skip = data.length;
         let apiData = {Limit:limit, Skip:skip, requestType, city, state, country, postalCode, owner}
@@ -57,7 +53,13 @@ class UserDonations extends Component {
     }
 
     componentDidMount = async()=>{
-        await this.fetchData();
+        this.setState({userId: this.props.owner}, this.fetchData)
+    }
+
+    componentDidUpdate =async()=>{
+        if(this.state.userId!=="" && this.props.owner !== this.state.userId){
+            this.setState({userId: this.props.owner, data:[], hasMore:true}, this.fetchData)
+        }
     }
     
     notifyFail = (message) => toast.error(message);
@@ -77,7 +79,6 @@ class UserDonations extends Component {
 
     deleteFoodPost = async(id)=>{
         await this.props.deleteFoodRequest({id})
-        console.log(id)
         if(this.props.foodRequestConfirmation.error){
             this.notifyFail(this.props.foodRequestConfirmation.error);
         }else if(this.props.foodRequestConfirmation.message){
