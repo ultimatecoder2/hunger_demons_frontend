@@ -391,6 +391,7 @@ class DonateFood extends Component{
                             </Col>
                         </Row>
                 </Form>
+                <div className="invalid__feedback" style={{fontSize:"1.2rem"}}>** Don't forget to delete the request, once it gets fulfilled.</div>
                 <div className="form__btn">
                     <button className="form__btn--normal btn--green mr-3" type="submit" onClick={this.handleSubmit}>
                         Submit
