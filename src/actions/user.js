@@ -14,7 +14,7 @@ export const updateProfile = (data) => async (dispatch,getState) =>{
         for (var value of formData.values()) {
             console.log(value);
          }
-        const response = await authRecord(token).patch('/users/me', 
+        await authRecord(token).patch('/users/me', 
             formData, {
                 headers:{
                     "Content-type":"multipart/form-data"
@@ -22,7 +22,7 @@ export const updateProfile = (data) => async (dispatch,getState) =>{
             }
         );
 
-        dispatch({type:UPDATE_FORM,payload:{msg:"Your request has been registered"}});
+        dispatch({type:UPDATE_FORM,payload:{msg:"Your profile has been updated successfully"}});
     }catch(e){
         console.log("Error",e);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
@@ -33,9 +33,9 @@ export const updateAddress = (data) => async (dispatch,getState) =>{
     let token = getState().auth.token;
     console.log(data);
     try{
-        const response = await authRecord(token).patch('/users/me/address', data);
+        await authRecord(token).patch('/users/me/address', data);
 
-        dispatch({type:UPDATE_FORM,payload:{msg:"Your request has been registered"}});
+        dispatch({type:UPDATE_FORM,payload:{msg:"Your Address has been updated"}});
     }catch(e){
         console.log("Error",e.response);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
@@ -43,10 +43,10 @@ export const updateAddress = (data) => async (dispatch,getState) =>{
 }
 export const fetchProfile = (id)=>async(dispatch, getState)=>{
     const url = '/users/'+id;
-    console.log("Got",id, "Url:",url);
+    // console.log("Got",id, "Url:",url);
     try{
         const response = await record.get(url);
-        console.log(response.data);
+        // console.log(response.data);
         dispatch({type:FETCH_PROFILE,payload:{profile:response.data}});
     }catch(e){
         console.log(e);
