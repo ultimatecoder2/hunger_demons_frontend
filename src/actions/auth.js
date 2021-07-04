@@ -1,7 +1,7 @@
 import {record, authRecord} from '../apis/feed_needy';
 import history from '../history';
 import {SIGN_UP, AUTH_FAILED, SIGN_IN, SIGN_OUT, FORGOT_PASS, 
-    FORGOT_PASS_FAILED, RESET_PASS, RESET_PASS_FAILED} from './actionTypes'
+    FORGOT_PASS_FAILED, RESET_PASS, RESET_PASS_FAILED, RESET_USER_PROFILE} from './actionTypes'
 
 export const signUp = (userDetails) => async (dispatch,getState) =>{
     try{
@@ -58,6 +58,7 @@ export const signOut = (userDetails) => async (dispatch,getState) =>{
         localStorage.removeItem('isSignedIn')
         // history.push('/logout');
         dispatch({type:SIGN_OUT, payload:{msg:"You have been logged out successfully"}});
+        dispatch({type:RESET_USER_PROFILE, payload:""})
     }catch(e){
         localStorage.removeItem('token')
         localStorage.removeItem('userId')
