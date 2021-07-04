@@ -1,26 +1,24 @@
+//library imports
 import React,{Component} from 'react';
 import {connect} from 'react-redux';
 import Select from 'react-select'
 import {toast, ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {addRequest} from '../../../actions/index';
-import {Link} from 'react-router-dom';
 import { Country, State, City }  from 'country-state-city';
-import { countryList } from '../../../variables';
-//Components
-import FormHeader from'../../header/form__header';
-import {foodTypes, foodOptions} from '../../../variables';
-//Bootstrap
 import {Container, Row, Col} from 'react-bootstrap';
-import '../forms.css'
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table'
-//Icons
-import {GiMailbox} from 'react-icons/gi';
+import {GiMailbox, GiKnifeFork} from 'react-icons/gi';
 import {FaAddressCard,FaCity,FaGlobeAmericas,FaMapMarkedAlt} from 'react-icons/fa';
 import {BiNotepad} from 'react-icons/bi';
-import {GiKnifeFork} from 'react-icons/gi';
 
+//Manual imports
+import FormHeader from'../../header/form__header';
+import {foodTypes, foodOptions, countryList} from '../../../variables';
+import {addRequest} from '../../../actions/index';
+
+//css
+import 'react-toastify/dist/ReactToastify.css';
+import '../forms.css'
 
 class DonateFood extends Component{
     constructor(props){
@@ -51,12 +49,19 @@ class DonateFood extends Component{
             }
         }
     }
+
+    notifyFail = (message) => toast.error(message);
+    notifySuccess = (message) => toast.success(message);
+
+    // input handlers
     handlefoodTypeChange = foodtype => {
         this.setState({ foodtype });
     }
+
     handlefoodNameChange = foodName => {
         this.setState({ foodName });
     }
+
     handleInputChange = event=>{
         const target = event.target;
         const name = target.name;
@@ -64,6 +69,7 @@ class DonateFood extends Component{
           [name]: event.target.value
         });
     }
+
     handleCountryChange = value=>{
         let states = State.getStatesOfCountry(value.country_code);
         let newStateList = []
@@ -79,6 +85,7 @@ class DonateFood extends Component{
             city:""
         })
     }
+
     handleAddressStateChange = value =>{
         let cities = City.getCitiesOfState(value.country_code, value.state_code);
         let newCityList = [];
@@ -100,27 +107,9 @@ class DonateFood extends Component{
 
     }
 
-    showAddressForm= e =>{
-        e.preventDefault();
-        const foodtype = this.state.foodtype.value;
-        const food_description = this.state.food_description;
-        const isValid = this.formValidation(foodtype, food_description);
-        if(isValid){
-            this.setState({
-                askAddress:true,
-                askFood:false
-            })
-        }
-    }
-    showFoodForm = e=>{
-        e.preventDefault();
-        this.setState({
-            askAddress:false,
-            askFood:true
-        })
-    }
 
-    
+    // form validation
+
     validateFoodDescription = (foodName, quantity) =>{
         let foodNameError="", quantityError = "", error;
         if(!foodName){
@@ -203,6 +192,31 @@ class DonateFood extends Component{
 
     }
 
+
+    //multipage renderig
+    showAddressForm= e =>{
+        e.preventDefault();
+        const foodtype = this.state.foodtype.value;
+        const food_description = this.state.food_description;
+        const isValid = this.formValidation(foodtype, food_description);
+        if(isValid){
+            this.setState({
+                askAddress:true,
+                askFood:false
+            })
+        }
+    }
+    showFoodForm = e=>{
+        e.preventDefault();
+        this.setState({
+            askAddress:false,
+            askFood:true
+        })
+    }
+
+    
+    // button handlers
+
     addFoodDescriptiton = (event)=>{
         event.preventDefault();
         const foodName = this.state.foodName.value;
@@ -224,8 +238,7 @@ class DonateFood extends Component{
 
     }
 
-    notifyFail = (message) => toast.error(message);
-    notifySuccess = (message) => toast.success(message);
+    
 
     handleSubmit = async(event)=>{
         event.preventDefault();
@@ -260,6 +273,8 @@ class DonateFood extends Component{
         }
     }
 
+
+    //rendering components
     renderSelectedFood=()=>{
         const food_description  =this.state.food_description; 
         if(food_description.length>0)
@@ -385,6 +400,7 @@ class DonateFood extends Component{
                             </Col>
                         </Row>
                 </Form>
+                <div className="invalid__feedback" style={{fontSize:"1.2rem"}}>** Don't forget to delete the request, once it gets fulfilled.</div>
                 <div className="form__btn">
                     <button className="form__btn--normal btn--green mr-3" type="submit" onClick={this.handleSubmit}>
                         Submit
