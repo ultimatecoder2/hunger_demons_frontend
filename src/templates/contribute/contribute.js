@@ -144,7 +144,7 @@ export default class contribute extends Component {
                     </div>
                     <div className="section__content">
                         <div className="styled__list">
-                            <ol class="gradient__list">
+                            <ol className="gradient__list">
                                 <li><Link to="/login" className="styled__list__links">Login</Link> to your Hunger Demons account.</li>
                                 <li>Register a <Link to="/donate" className="styled__list__links">Food Donation</Link> or <Link to="/getfood" className="styled__list__links">Food Need</Link> request by filling a form.</li>
                                 <li>A representative from food organization will come to your location and fullfill the request, by ensuring the food quality checks.</li>
