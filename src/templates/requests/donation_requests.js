@@ -12,7 +12,7 @@ import {foodTypes} from '../../variables';
 import {GiKnifeFork, GiMailbox} from 'react-icons/gi';
 import { State, City }  from 'country-state-city';
 import {FaCity, FaMapMarkedAlt} from 'react-icons/fa';
-
+import Loader from "../loader";
 
 class PickupRequest extends Component {
     constructor(props){
@@ -183,11 +183,11 @@ class PickupRequest extends Component {
             return posts.map((post,  key)=>{
                 return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
             })
-        }else{
+        }else if(!this.state.hasMore){
             return(
                 <h3>No request exist at your location</h3>
             )
-        }
+        }else return;
         
     }
 
@@ -199,7 +199,7 @@ class PickupRequest extends Component {
                 <div className="forms__section--food">
                     <Container>    
                         <div className="form__heading">
-                            <h2>Donate Requests 2</h2>
+                            <h2>Donation Requests </h2>
                         </div>
                         <div className="search__section">
                             <h3 className="filters__heading"> Filter results</h3>
@@ -247,7 +247,7 @@ class PickupRequest extends Component {
                                 dataLength={this.state.data.length}
                                 next = {this.fetchData}
                                 hasMore = {this.state.hasMore}
-                                loader={<h4>Loading........</h4>}
+                                loader={<Loader/>}
                                 endMessage={<></>}
                                 className="flex flex-wrap scroll_div_outer"
                             >
