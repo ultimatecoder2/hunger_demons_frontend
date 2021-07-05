@@ -12,11 +12,14 @@ import {Container, Row, Col} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Form from 'react-bootstrap/Form';
-import { CountryDropdown, RegionDropdown} from 'react-country-region-selector';
 import {signUp} from '../../actions/index';
-import history from '../../history'
 import validator from 'validator';
 import './forms.css'
+// Latest version - v3.0.0 with Tree Shaking to reduce bundle size
+import { State, City }  from 'country-state-city';
+import { countryList } from '../../variables';
+import Select from 'react-select'
+// Import Interfaces`
 
 
 class signup extends Component{
@@ -29,10 +32,12 @@ class signup extends Component{
             contact: "",
             addressLine1:"",
             addressLine2:"",
+            postalCode:"",
             city:"",
             addressState:"",
-            postalCode:"",
             country:"",
+            stateList:[],
+            cityList:[],
             address:[],
             errors:{
                 username:"",email:"", password:"", contact:"",
@@ -48,13 +53,6 @@ class signup extends Component{
         this.setState({
           [name]: event.target.value
         });
-    }
-    
-    selectCountry(val){
-        this.setState({ country: val });
-    };
-    selectState= (val)=>{
-        this.setState({ addressState: val });
     }
 
     validateForm = (data)=>{
@@ -96,11 +94,11 @@ class signup extends Component{
             addressError=  "This address field is required";
             error=true;
         }
-        if(!city.trim()){
+        if(!city){
             cityError="City is required";
             error=true;
         }
-        if(!addressState.trim()){
+        if(!addressState){
             stateError = "State is required";
             error=true;
         }
@@ -133,16 +131,52 @@ class signup extends Component{
     }
 
     notifyFail = (message) => toast.error(message);
+    
+    handleCountryChange = value=>{
+        let states = State.getStatesOfCountry(value.country_code);
+        let newStateList = []
+        for(var i=0;i<states.length;i++){
+            var obj = {label:states[i].name, value:states[i].name, state_code:states[i].isoCode, country_code:states[i].countryCode}
+            newStateList.push(obj);   
+        }
+        this.setState({
+            country:value,
+            countryCode:value.country_code,
+            stateList: newStateList,
+            addressState:"",
+            city:""
+        })
+    }
+    
+    handleAddressStateChange = value =>{
+        let cities = City.getCitiesOfState(value.country_code, value.state_code);
+        let newCityList = [];
+        for(var i=0;i<cities.length;i++){
+            var obj = {label:cities[i].name, value:cities[i].name, state_code:cities[i].stateCode, country_code:cities[i].countryCode}
+            newCityList.push(obj);   
+        }
+        this.setState({
+            addressState:value,
+            cityList: newCityList,
+            city:""
+        })
+    }
+
+    handleCityChange = value =>{
+        this.setState({
+            city:value
+        })
+
+    }
+
 
     handleSubmit= async (event)=>{
         event.preventDefault();
         //Validate the form
         const isValid = this.validateForm(this.state);
         if(isValid){
-            //Store data in relevant fields and send request
-
             const {username, email, password, contact, addressLine1, addressLine2,city, addressState, postalCode,country} = this.state;
-            var userAddress = {addressLine1, addressLine2, city, state: addressState, postalCode, country}
+            var userAddress = {addressLine1, addressLine2, city:city, state: addressState.value, postalCode, country:country.value}
             const address = [userAddress]
             const userDetails = {name:username, email, password, contact,address}
             console.log(userDetails);
@@ -214,9 +248,27 @@ class signup extends Component{
 
                         <Row>
                             <Col md={6}>
+                                <Form.Group controlId="user__country">
+                                    <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
+                                    <Select name="country" options={countryList} className="basic-multi-select" value={this.state.country} onChange={this.handleCountryChange} classNamePrefix="select" placeholder="Select Country"/>
+                                    <div className="invalid__feedback">{this.state.errors.country}</div>
+                                </Form.Group>        
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group controlId="user__state">
+                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> State</Form.Label>
+                                    <Select name="addressState" options={this.state.stateList} className="basic-multi-select" value={this.state.addressState} onChange={this.handleAddressStateChange} classNamePrefix="select" placeholder="Select State"/>
+                                    
+                                    <div className="invalid__feedback">{this.state.errors.addressState}</div>
+                                </Form.Group>        
+                            </Col>
+                        </Row>
+
+                        <Row>
+                            <Col md={6}>
                                 <Form.Group controlId="user__city">
                                     <Form.Label><span className="form__icon"><FaCity/></span><span className="label__important">*</span> City</Form.Label>
-                                    <input name="city" className="form-control" type="text" value={this.state.city} placeholder="Enter city" onChange={this.handleInputChange} />
+                                    <Select name="city" options={this.state.cityList} className="basic-multi-select" value={this.state.city} onChange={this.handleCityChange} classNamePrefix="select" placeholder="Select City"/>
                                     <div className="invalid__feedback">{this.state.errors.city}</div>
                                 </Form.Group>
                             </Col>
@@ -226,24 +278,6 @@ class signup extends Component{
                                     <input name="postalCode" className="form-control" type="text" value={this.state.postalCode} placeholder="Enter Postal Code" onChange={this.handleInputChange} />
                                     <div className="invalid__feedback">{this.state.errors.postalCode}</div>
                                 </Form.Group>
-                            </Col>
-                        </Row>
-
-                        <Row>
-                            <Col md={6}>
-                                <Form.Group controlId="user__country">
-                                    <Form.Label><span className="form__icon"><FaGlobeAmericas/></span><span className="label__important">*</span> Country</Form.Label>
-                                    <CountryDropdown value={this.state.country} className="form-control" onChange={(val) => this.selectCountry(val)} required/>
-                                    <div className="invalid__feedback">{this.state.errors.country}</div>
-                                </Form.Group>        
-                            </Col>
-                            <Col md={6}>
-                                <Form.Group controlId="user__state">
-                                    <Form.Label><span className="form__icon"><FaMapMarkedAlt/></span><span className="label__important">*</span> State</Form.Label>
-                                    <RegionDropdown blankOptionLabel="Select a country first" defaultOptionLabel="Select a region" className="form-control" 
-                                            country={this.state.country} value={this.state.addressState} onChange={this.selectState}/>
-                                    <div className="invalid__feedback">{this.state.errors.addressState}</div>
-                                </Form.Group>        
                             </Col>
                         </Row>
 
