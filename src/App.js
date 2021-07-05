@@ -6,7 +6,7 @@ import ScrollToTop from './scrollToTop';
 import Header from './templates/header/header';
 import Footer from './templates/footer/footer';
 import Home from './templates/home';
-import SignUp from './templates/forms/signup_test';
+import SignUp from './templates/forms/signup';
 import Login from './templates/forms/login';
 import Logout from './templates/forms/logout';
 import Register from './templates/forms/register';
