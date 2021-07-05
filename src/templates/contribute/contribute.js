@@ -10,6 +10,7 @@ import HelpHand from '../../styles/img/helping_hand.jpg';
 import HandShakeIcon from '../../styles/img/hand_shake_icon.jpg';
 import OrganizationWorker from '../../styles/img/organization_worker_sized.jpg'
 import './contribute.css'
+
 export default class contribute extends Component {
     render() {
         return (
@@ -89,7 +90,7 @@ export default class contribute extends Component {
                         
                         <CardDeck>
                             <Card className="contribute__card">
-                                <Card.Img className="contribute__card__img" variant="top" src={FoodDonation} fluid="true"/>
+                                <Card.Img className="contribute__card__img" variant="top" src={FoodDonation} fluid="true" />
                                 <Card.Body>
                                     <Card.Title>Donate Food</Card.Title>
                                     <Card.Text>
