@@ -5,6 +5,7 @@ import {renderCard} from '../requests/request_cards.js'
 import {toast, ToastContainer} from 'react-toastify';
 import {fetchUserRequests, deleteFoodRequest} from '../../actions/index'
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Loader from "../loader";
 
 class UserNeeds extends Component {
     constructor(props){
@@ -110,11 +111,11 @@ class UserNeeds extends Component {
             return posts.map((post,  key)=>{
                 return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
             })
-        }else{
+        }else if(!this.state.hasMore){
             return(
                 <h3>No need request found</h3>
             )
-        }
+        }else return;
         
     }
 
@@ -127,7 +128,7 @@ class UserNeeds extends Component {
                         dataLength={this.state.data.length}
                         next = {this.fetchData}
                         hasMore = {this.state.hasMore}
-                        loader={<h4>Loading........</h4>}
+                        loader={<Loader/>}
                         endMessage={<></>}
                         className="flex flex-wrap scroll_div_outer"
                     >
