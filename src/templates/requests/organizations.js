@@ -12,6 +12,7 @@ import {Container, Row, Col,Form} from 'react-bootstrap';
 import FormHeader from'../header/form__header';
 import {renderOrgCard} from './request_cards.js';
 import {foodTypes} from '../../variables';
+import Loader from '../loader';
 
 //api endpoints
 import {fetchOrganizations, getUserDetails} from '../../actions/index';
@@ -152,7 +153,6 @@ class Organizaitons extends Component {
 
     renderRequests = ()=>{
         let organizations = this.state.data;
-        console.log(organizations);
         if(this.state.postalCode || this.state.foodTypeFilter){
             organizations = organizations.filter((organization) => {
                 
@@ -165,10 +165,12 @@ class Organizaitons extends Component {
             return organizations.map((post,  key)=>{
                 return renderOrgCard({post,val:key})
             })
-        }else{
+        }else if(!this.state.hasMore){
             return(
                 <h3>No organization in your area is registered with us.</h3>
             )
+        }else{
+            return;
         }
         
     }
@@ -229,7 +231,7 @@ class Organizaitons extends Component {
                                 dataLength={this.state.data.length}
                                 next = {this.fetchData}
                                 hasMore = {this.state.hasMore}
-                                loader={<h4>Loading........</h4>}
+                                loader={<Loader/>}
                                 endMessage={<></>}
                                 className="flex flex-wrap scroll_div_outer"
                             >
