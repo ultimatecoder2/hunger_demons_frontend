@@ -30,10 +30,10 @@ export default class contribute extends Component {
                                     
                                     <Image src={HelpHand} className="features__image"/>
                                     <h3 className="features__heading">
-                                        Help needfull
+                                        Help needful
                                     </h3>
                                     <p className="features__content">
-                                        All the donated food will be going to the needfull people. Helping others is a good deed.
+                                        Every bite of donated food will be used to fill the stomach of needy people, who find it difficult to afford food expenses.
                                     </p>
                                 </Col>
 
@@ -44,7 +44,7 @@ export default class contribute extends Component {
                                         Reduce food Wastage
                                     </h3>
                                     <p className="features__content">
-                                        It reduces the food wastage, as extra unused food can be eaten by ones, who can't afford it.
+                                        Distributing excess amount of food to ones who need it helps in proper utilization of food.
                                     </p>
                                 </Col>
 
@@ -66,7 +66,7 @@ export default class contribute extends Component {
                                         Strengthens Community
                                     </h3>
                                     <p className="features__content">
-                                        Food distribution among community ensures that you have a safe and healthy community around you.
+                                        Food distribution among local areas ensures that you have a safe and healthy community around you.
                                     </p>
                                 </Col>
                             </Row>
@@ -122,14 +122,19 @@ export default class contribute extends Component {
                                 <Card.Body>
                                     <Card.Title>Part of an Organization? </Card.Title>
                                     <Card.Text>
-                                        You can help in collecting food from food donors and distribute it among needy people. 
-                                        For seeing donation requests, please <Link to="/donate_requests">Click here</Link>.
-                                        Food requests posted by needy people can be <Link to="/need_requests">viewed here</Link>. 
-                                        Please feel free to post need food requests, on behalf of someone who need food.
+                                        You can help in collecting, storing and distributing food. You also need to ensure that food is hygenic and safe to eat. 
+                                        <br/>
+                                        Following links can be useful:
+                                        <div style={{marginLeft:'1.2rem'}}>
+                                            <ul>
+                                                <li> <Link to="/donate_requests">Food Donation Requests</Link></li>
+                                                <li> <Link to="/need_requests">Need food Requests</Link></li>
+                                            </ul>
+                                        </div>
                                     </Card.Text>
                                 </Card.Body>
                                 <Card.Footer className="contribute__card__footer">
-                                    <Link to="/donate_requests" className ="btn contribute__card__btn">Donation Requests &#8594;</Link>
+                                    <Link to="/register" className ="btn contribute__card__btn">Register Organization &#8594;</Link>
                                 </Card.Footer>
                             </Card>
                         </CardDeck>
