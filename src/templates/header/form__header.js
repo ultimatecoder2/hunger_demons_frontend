@@ -1,7 +1,8 @@
 import React,{Component} from 'react';
 import { connect } from 'react-redux';
 import Logo from '../../styles/img/logo_transparent.png';
-import {Container, Row, Col, Image, Navbar,Nav, NavDropdown} from 'react-bootstrap';
+import {Image, Navbar,Nav, NavDropdown} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap'
 import {Link} from 'react-router-dom';
 import './header.css';
 
@@ -40,14 +41,53 @@ class header extends Component{
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="ml-auto RightNav">
                             <Link to="/contribute" className="nav-link"><span className="NavLink">Contribute</span></Link>
-                            <Link to="/donate_requests" className="nav-link"><span className="NavLink">Food Donations</span></Link>
-                            <Link to="/need_requests" className="nav-link"><span className="NavLink">Need Food</span></Link>
-                            <Link to="/organizations" className="nav-link"><span className="NavLink">Organizations</span></Link>
+                            
+                            <NavDropdown title="Food Requests" id="food_requests_navbar" className="NavLink" style={{color:"#4b4b4b"}}>
+                                <LinkContainer to="/donate_requests">
+                                    <NavDropdown.Item className="nav-link">
+                                        <span className="NavLink">Food Donations</span>
+                                    </NavDropdown.Item>
+                                </LinkContainer>
+                                
+                                <LinkContainer to="/need_requests">
+                                    <NavDropdown.Item className="nav-link">
+                                        <span className="NavLink">Need Food</span>
+                                    </NavDropdown.Item>
+                                </LinkContainer>
+                            </NavDropdown>
+
+                            <NavDropdown title="Add New Request" id="add_food_requests_navbar" className="NavLink">
+                                <LinkContainer to="/donate">
+                                    <NavDropdown.Item className="nav-link">
+                                        <span className="NavLink">Donate Food</span>
+                                    </NavDropdown.Item>
+                                </LinkContainer>
+
+                                <LinkContainer to="/getFood">
+                                    <NavDropdown.Item className="nav-link">
+                                        <span className="NavLink">Need Food</span>
+                                    </NavDropdown.Item>
+                                </LinkContainer>
+                            </NavDropdown>
+
+                            <NavDropdown title="Organizations" id="organizations_navbar" className="NavLink">
+                                <LinkContainer to="/organizations">
+                                    <NavDropdown.Item className="nav-link">
+                                        <span className="NavLink">Registered Organizations</span>
+                                    </NavDropdown.Item>
+                                </LinkContainer>
+
+                                <LinkContainer to="/register">
+                                    <NavDropdown.Item className="nav-link">
+                                        <span className="NavLink">Add New Organization</span>
+                                    </NavDropdown.Item>
+                                </LinkContainer>
+                            </NavDropdown>
+
                             <NavDropdown.Divider />
                         </Nav>
 
                         <Nav className="ml-auto RightNav">
-                            <Link to="/register" className="nav-link"><span className="NavLink">Register</span></Link>
                                 {this.renderUserStatus()}
                         </Nav>
                     </Navbar.Collapse>
