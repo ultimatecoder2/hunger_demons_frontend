@@ -26,8 +26,12 @@ function home() {
                     
                     <div className="section__content">
                         <p> 
-                            With the 
-                            According to a research, Every ten seconds, a child dies from the effects of hunger. 690 million people are going hungry, 2 billion suffer from malnutrition, but there is enough food, knowledge and resources for all. 
+                        Having access to nutritious food is a human right. According to research, every 10 seconds, a child dies from the effects of hunger. 
+                        690 million people are going hungry, 2 billion suffer from malnutrition. It's high time that we need to act upon it; otherwise, 
+                        the situation will worsen.</p>
+                        <p>
+                        There are enough food, knowledge, and resources for all. We lack the prevention of food wastage and equal distribution of food among 
+                        all sections of society. 
                         </p>    
                     </div>
                     </Col>
@@ -46,14 +50,13 @@ function home() {
                     </div>
                     
                     <div className="section__content">
-                    <p>
-                            <b>Feed Needy</b> is a non profitable project launched for the welfare of society. The main motive of this project
-                            is to design interventions to reduce hunger among underserved communities across the world.
+                        <p>
+                            <b>Hunger Demons</b> is a non-profitable project launched for the welfare of society. The main motive of this project is 
+                            to design interventions to reduce hunger among underserved communities across the world.
                         </p>
                         <p> 
-                            According to a research, Every ten seconds, a child dies from the effects of hunger. 690 million people are going hungry, 2 billion suffer from malnutrition, but there is enough food, knowledge and resources for all.
-                            What we actually lack is the equal distribution of food among people. There might be a lot of wastage of food in one part of the city, whereas shortage in the other. We work to solve this problem.
-                            Our main motive is to make food accessible to the unprivileged section of society. 
+                            We strongly believe that the community can play a significant role in eliminating the menace of hunger. We encourage people 
+                            having an excess of fresh food to donate it to the ones who need it. It will also prevent food wastage.  
                         </p>   
                     </div>
                     </Col>
@@ -81,13 +84,11 @@ function home() {
                     
                     <div className="section__content">
                         <p>
-                            <b>Feed Needy</b> is a non profitable project launched for the welfare of society. The main motive of this project
-                            is to design interventions to reduce hunger among underserved communities across the world.
+                            Hunger Demons provides a platform where the local community can help each other with food needs. Here people can register their food donation or food need requests. 
+                            These requests will be visible to other people in your locality and food organizations that can help you with food services.
                         </p>
                         <p> 
-                            According to a research, Every ten seconds, a child dies from the effects of hunger. 690 million people are going hungry, 2 billion suffer from malnutrition, but there is enough food, knowledge and resources for all.
-                            What we actually lack is the equal distribution of food among people. There might be a lot of wastage of food in one part of the city, whereas shortage in the other. We work to solve this problem.
-                            Our main motive is to make food accessible to the unprivileged section of society. 
+                            We partner with organizations for food collection, storage, and food distribution purposes. You can also browse nearby organizations and contact them for your needs.
                         </p>   
                     </div>
                     </Col>
@@ -105,9 +106,9 @@ function home() {
                     
                     <div className="section__content">
                         <p>
-                                We would love to partner with organisations working towards the similar cause. 
-                                Reach out to us if you’re an NGO, private organisation or educational institute that can help in storing and distributing food.
-                                Your organization can also contribute by informing about the food needs.
+                            We would love to partner with organizations working towards a similar cause.  Reach out to us if you’re an NGO, 
+                            private organization, or educational institute that can help in food collection, food storage, and food distribution.
+                            You also need to perform timely food quality checks, and ensure that proper hygiene is maintained.
                                 <br/> 
                         </p>
                             <Link to="/register" className="btn" >Register Now &#8594;</Link>  
