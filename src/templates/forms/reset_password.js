@@ -25,6 +25,9 @@ class ResetPass extends Component{
         }
     }
     componentDidMount(){
+        if(this.props.auth.isSignedIn){
+            history.push('/')
+        }
         const token = this.props.match.params.token;
         const userId = this.props.match.params.id;
         this.setState({
@@ -116,7 +119,8 @@ class ResetPass extends Component{
 const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
-        resetPass: state.resetPassword
+        resetPass: state.resetPassword,
+        auth: state.auth
     })
 
 }

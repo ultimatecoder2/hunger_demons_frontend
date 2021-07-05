@@ -10,6 +10,7 @@ import './forms.css'
 import {forgetPassword} from '../../actions/index'
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import history from '../../history';
 
 class forgotPass extends Component{
     constructor(props){
@@ -22,9 +23,13 @@ class forgotPass extends Component{
             }
         }
     }
+    
     componentDidMount(){
-        
+        if(this.props.auth.isSignedIn){
+            history.push('/')
+        }
     }
+
     handleInputChange=(event)=>{
         const target = event.target;
         const name = target.name;
@@ -116,7 +121,8 @@ class forgotPass extends Component{
 const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
-        resetPass: state.resetPassword
+        resetPass: state.resetPassword,
+        auth: state.auth
     })
 
 }
