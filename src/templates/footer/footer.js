@@ -46,8 +46,13 @@ class footer extends Component{
                                 <Row className="footer__logo">
                                     <Image src={Logo} className="footer__brandlogo" fluid/>
                                 </Row>
-                                
+                                <Row>
+                                    
+                                </Row>
                             </div>
+                            <p style={{fontSize:'1.2rem', color:'#fff'}}>Made with ❤️ by <a href="https://www.github.com/ultimatecoder2" target="blank">DJ</a>. 
+                                Don't forget to <a href="https://github.com/ultimatecoder2/hunger_demons_frontend" target="blank">star this project</a>, if you liked it</p>
+                            
                             <p>&#169;	2021. All rights Reserved.</p>
                         </div>    
                     </Container>
