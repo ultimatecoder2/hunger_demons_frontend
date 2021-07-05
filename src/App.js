@@ -43,12 +43,15 @@ function PrivateRoute({ userAuth, children, ...rest }) {
     />
   );
 }
-const userProfileFetch = async(props)=>{
+const userProfileFetch = async (props)=>{
   await props.getUserDetails();
 }
 
 function App(props) {
-  userProfileFetch(props);
+  if (props){
+    userProfileFetch(props);
+  }
+  
   return (
     <Router history={history}>
       
