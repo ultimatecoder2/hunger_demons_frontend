@@ -78,11 +78,11 @@ class DonateFood extends Component{
 
     // input handlers
     handlefoodTypeChange = foodtype => {
-        this.setState({ foodtype });
+        this.setState({ foodtype, food_description:[] ,foodName:""});
     }
 
     handlefoodNameChange = foodName => {
-        this.setState({ foodName });
+        this.setState({ foodName , });
     }
 
     handleInputChange = event=>{
@@ -323,7 +323,7 @@ class DonateFood extends Component{
                             <tr>
                             <th>S.No</th>
                             <th>Food Description</th>
-                            <th>Quantity</th>
+                            <th>Quantity (persons)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -357,7 +357,7 @@ class DonateFood extends Component{
                             <div className="invalid__feedback">{this.state.errors.foodName}</div>
                         </Col>
                         <Col sm={5}>
-                            <input name="quantity" className="form-control" type="text" value={this.state.quantity} placeholder="Quantity" onChange={this.handleInputChange} />
+                            <input name="quantity" className="form-control" type="text" value={this.state.quantity} placeholder="Quantity (number of persons) " onChange={this.handleInputChange} />
                             <div className="invalid__feedback">{this.state.errors.quantity}</div>
                         </Col>
                         <Col sm={2}>
