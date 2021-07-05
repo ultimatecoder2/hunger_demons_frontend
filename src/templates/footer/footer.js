@@ -1,7 +1,6 @@
 import React,{Component} from 'react';
 import {AiOutlineMail} from 'react-icons/ai';
 import {FiPhoneCall} from 'react-icons/fi';
-import {FaFacebookSquare,FaTwitterSquare,FaLinkedin} from 'react-icons/fa';
 import Logo from '../../styles/img/logo_transparent.png';
 import './footer.css'
 import {Container, Row, Col, Image} from 'react-bootstrap';
@@ -18,7 +17,11 @@ class footer extends Component{
                             <Row>
                                 <Col md={6} className="footerColumn">
                                     <div className="footerHeading"> About Us</div>
-                                    <div className  = "footerContent">We are leading solution providers that provide solution to a number of social and technical problems</div>
+                                    <div className  = "footerContent">
+                                        <p> 
+                                            We are leading solution providers that provide solution to a number of social and technical problems
+                                        </p>
+                                    </div>
                                 </Col>
 
                                 <Col md={6} className="footerColumn">
@@ -34,15 +37,6 @@ class footer extends Component{
                                     
                                     </div>
                                 </Col>
-
-                                {/* <Col md={4} className="footerColumn">
-                                <div className="footerHeading">Get Social With Us</div>
-                                <div className  = "footerContent">
-                                    <Row><div><a href ="#" className ="social_links"><span className= "social_icons facebook"><FaFacebookSquare/></span> Facebook</a></div></Row>
-                                    <Row><div><a href ="#" className ="social_links"><span className= "social_icons linkedIn"><FaLinkedin/></span>LinkedIn</a></div></Row>
-                                    <Row><div><a href ="#" className ="social_links"><span className= "social_icons twitter"><FaTwitterSquare/></span> Twitter</a></div></Row>
-                                </div>
-                                </Col> */}
                             </Row>
                             <br/>
                             <hr></hr>
@@ -50,15 +44,6 @@ class footer extends Component{
                             <div className="">
                                 <Row className="footer__logo">
                                     <Image src={Logo} className="footer__brandlogo" fluid/>
-                                    {/* <Col sm={5}>
-                                        
-                                    </Col>
-                                    <Col sm={2}>
-                                        <Image src={Logo} className="footer__brandlogo" fluid/>        
-                                    </Col>
-                                    <Col sm={5}>
-                                        
-                                    </Col> */}
                                 </Row>
                                 
                             </div>
