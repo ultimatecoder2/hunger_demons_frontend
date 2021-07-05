@@ -182,7 +182,7 @@ class Organizaitons extends Component {
                 <div className="forms__section--food">
                     <Container>    
                         <div className="form__heading">
-                            <h2>Organizations</h2>
+                            <h2>Registered Organizations</h2>
                         </div>
                         <div className="search__section">
                             <h3 className="filters__heading"> Filter results</h3>
