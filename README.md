@@ -3,6 +3,7 @@
 </p>
 This app focusses on connecting the local communities and organizations for food related needs. Its main motive is cure the menace of hunger by distrubuting food among all sections of society.
 
+### ✨ [Visit Deployed Website](https://hunger-demons.herokuapp.com/)
 
 ## Installation
 Install node on your local pc <br/>
