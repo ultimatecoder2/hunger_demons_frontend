@@ -8,8 +8,8 @@ import {FaAddressCard, FaUserAlt} from 'react-icons/fa';
 import {ImCalendar, ImBin} from 'react-icons/im';
 
 const renderFoodDescription = (foodDescription)=>{
-    return foodDescription.map(({foodName, quantity})=>{
-        return <Card.Subtitle tag="h6" className="mb-4 text-muted"><span className='fa fa-question-circle fa-lg question-icon'/>{foodName} for {quantity} persons</Card.Subtitle>
+    return foodDescription.map(({foodName, quantity}, index)=>{
+        return <Card.Subtitle tag="h6" className="mb-4 text-muted" key={index}><span className='fa fa-question-circle fa-lg question-icon'/>{foodName} for {quantity} persons</Card.Subtitle>
     })
 }
 const renderAddress = (address) =>{
@@ -37,7 +37,7 @@ export const renderCard = function(props){
     return(
     <div className='request__card' key={val}>
     <FadeTransform in transformProps={{exitTransform: 'scale(0.5) translateY(-50%)'}}>
-        <Card>
+        <Card key={val}>
             <Card.Body>
                 {isAuth && <Link to="#"><span className="delete__button--card" onClick={()=> props.deleteFoodRequest(FoodDetail._id)}><ImBin/></span></Link>}
                 <Card.Title tag="h6">{foodType}</Card.Title>                
@@ -55,9 +55,6 @@ export const renderCard = function(props){
             <Card.Body>
                 {renderFoodDescription(food_description)}
             </Card.Body>
-            {/* <Card.Footer>
-                <div className="request__card--btn"><Button className='col-10'><span className=''/>View</Button></div>
-            </Card.Footer> */}
         </Card>
     </FadeTransform>
     <p></p>
