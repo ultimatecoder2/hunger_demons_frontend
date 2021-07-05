@@ -15,11 +15,11 @@ import Form from 'react-bootstrap/Form';
 import {signUp} from '../../actions/index';
 import validator from 'validator';
 import './forms.css'
-// Latest version - v3.0.0 with Tree Shaking to reduce bundle size
 import { State, City }  from 'country-state-city';
 import { countryList } from '../../variables';
 import Select from 'react-select'
-// Import Interfaces`
+import history from '../../history';
+
 
 
 class signup extends Component{
@@ -44,6 +44,12 @@ class signup extends Component{
                 addressLine1:"",city:"", addressState:"", postalCode:"",
                 country:""
             }
+        }
+    }
+
+    componentDidMount(){
+        if(this.props.auth.isSignedIn){
+            history.push('/')
         }
     }
     

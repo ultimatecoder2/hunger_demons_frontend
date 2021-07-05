@@ -11,6 +11,7 @@ import './forms.css'
 import {signIn} from '../../actions/index';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import history from '../../history';
 
 class login extends Component{
     constructor(props){
@@ -25,6 +26,9 @@ class login extends Component{
         }
     }
     componentDidMount(){
+        if(this.props.auth.isSignedIn){
+            history.push('/')
+        }
         if(this.props.foodRequest.error){
             this.notifyFail("You need to login first to continue");
         }
