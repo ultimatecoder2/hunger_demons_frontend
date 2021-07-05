@@ -167,3 +167,14 @@ input:focus{
     font-size: 1rem;
     color: red;
 }
+.reset__form__button{
+    background-color: red;
+    border-radius: .6rem;
+    color: #fff;
+    padding:0.5rem 0.8rem;
+    border: transparent;
+}
+.reset__form__button:hover, .reset__form__button:focus{
+    background-color:#f53131;
+    color: #fff;
+}

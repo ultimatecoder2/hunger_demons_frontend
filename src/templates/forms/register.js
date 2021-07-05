@@ -8,17 +8,15 @@ import {FaAddressCard,FaCity,FaGlobeAmericas,FaMapMarkedAlt} from 'react-icons/f
 import {GiMailbox, GiKnifeFork} from 'react-icons/gi';
 import FormHeader from'../header/form__header';
 import {Container, Row, Col} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Form from 'react-bootstrap/Form';
-// import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
 import Select from 'react-select'
 import './forms.css'
 import {foodTypes} from '../../variables';
 import {addOrganization} from '../../actions/organizations';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Country, State, City }  from 'country-state-city';
+import { State, City }  from 'country-state-city';
 import { countryList } from '../../variables';
 
 
