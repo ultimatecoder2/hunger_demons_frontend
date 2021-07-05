@@ -5,6 +5,9 @@ import {renderCard} from '../requests/request_cards.js'
 import {toast} from 'react-toastify';
 import {fetchUserRequests, deleteFoodRequest} from '../../actions/index'
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Loader from "../loader";
+
+
 
 class UserDonations extends Component {
     constructor(props){
@@ -25,6 +28,33 @@ class UserDonations extends Component {
         }
     }
 
+    componentDidMount = async()=>{
+        this.setState({userId: this.props.owner}, this.fetchData)
+    }
+
+    componentDidUpdate =async()=>{
+        if(this.state.userId!=="" && this.props.owner !== this.state.userId){
+            this.setState({userId: this.props.owner, data:[], hasMore:true}, this.fetchData)
+        }
+    }
+    
+    notifyFail = (message) => toast.error(message);
+    notifySuccess = (message) => toast.success(message);
+    
+    // input handler
+    handleMultiSelectChange = foodtype => {
+        this.setState({ foodtype });
+    }
+
+    handleInputChange = (event)=>{
+        const target = event.target;
+        const name = target.name;
+        this.setState({
+          [name]: event.target.value
+        });
+    }
+
+    //apis
     fetchData = async()=>{
         if(!this.state.hasMore) return;
         const owner = this.state.userId;
@@ -52,31 +82,6 @@ class UserDonations extends Component {
         }
     }
 
-    componentDidMount = async()=>{
-        this.setState({userId: this.props.owner}, this.fetchData)
-    }
-
-    componentDidUpdate =async()=>{
-        if(this.state.userId!=="" && this.props.owner !== this.state.userId){
-            this.setState({userId: this.props.owner, data:[], hasMore:true}, this.fetchData)
-        }
-    }
-    
-    notifyFail = (message) => toast.error(message);
-    notifySuccess = (message) => toast.success(message);
-    
-    handleMultiSelectChange = foodtype => {
-        this.setState({ foodtype });
-    }
-
-    handleInputChange = (event)=>{
-        const target = event.target;
-        const name = target.name;
-        this.setState({
-          [name]: event.target.value
-        });
-    }
-
     deleteFoodPost = async(id)=>{
         await this.props.deleteFoodRequest({id})
         if(this.props.foodRequestConfirmation.error){
@@ -97,41 +102,19 @@ class UserDonations extends Component {
         }
     }
 
-    filterFormValidation = ()=>{
-        const {city, postalCode} = this.state;
-        let error=false;
-        if(!city&&!postalCode.trim()){
-            error = true;
-            this.setState({
-                formError:"At least one of the field from 'City' or 'PostalCode' must be filled"
-            })
-        }else{
-            this.setState({
-                formError:""
-            })
-        }
-        return !error;
-    }
-
-    handleFilterButton = (e)=>{
-        e.preventDefault();
-        const isValid = this.filterFormValidation();
-        if(isValid){
-            // this.fetchData();
-        }
-    }
     
+    // rendering
     renderRequests = ()=>{
         const posts = this.state.data;
         if(posts&&posts.length>0){
             return posts.map((post,  key)=>{
                 return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
             })
-        }else{
+        }else if(!this.state.hasMore){
             return(
                 <h3>No donation request found</h3>
             )
-        }
+        }else return;
         
     }
 
@@ -144,7 +127,7 @@ class UserDonations extends Component {
                         dataLength={this.state.data.length}
                         next = {this.fetchData}
                         hasMore = {this.state.hasMore}
-                        loader={<h4>Loading........</h4>}
+                        loader={<Loader/>}
                         endMessage={<></>}
                         className="flex flex-wrap scroll_div_outer"
                     >
