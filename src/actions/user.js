@@ -6,14 +6,10 @@ export const updateProfile = (data) => async (dispatch,getState) =>{
     const updates = Object.keys({...data});
     let formData = new FormData();
     updates.forEach((update) => {
-        console.log(data[update]);
         formData.append(update, data[update])
     } );
 
     try{
-        for (var value of formData.values()) {
-            console.log(value);
-         }
         await authRecord(token).patch('/users/me', 
             formData, {
                 headers:{
@@ -24,32 +20,27 @@ export const updateProfile = (data) => async (dispatch,getState) =>{
 
         dispatch({type:UPDATE_FORM,payload:{msg:"Your profile has been updated successfully"}});
     }catch(e){
-        console.log("Error",e);
+        // console.log("Error",e);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
     }
 }
 
 export const updateAddress = (data) => async (dispatch,getState) =>{
     let token = getState().auth.token;
-    console.log(data);
     try{
         await authRecord(token).patch('/users/me/address', data);
 
         dispatch({type:UPDATE_FORM,payload:{msg:"Your Address has been updated"}});
     }catch(e){
-        console.log("Error",e.response);
         dispatch({type:UPDATE_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
     }
 }
 export const fetchProfile = (id)=>async(dispatch, getState)=>{
     const url = '/users/'+id;
-    // console.log("Got",id, "Url:",url);
     try{
         const response = await record.get(url);
-        // console.log(response.data);
         dispatch({type:FETCH_PROFILE,payload:{profile:response.data}});
     }catch(e){
-        console.log(e);
         dispatch({type:FETCH_PROFILE_FAILED, payload:{error:e}})
     }
 }
@@ -62,7 +53,7 @@ export const getUserDetails = ()=> async(dispatch, getState)=> {
             const response = await authRecord(token).get('/users/me');
             dispatch({type:GET_USER_PROFILE,payload:{profile:response.data}});
         }catch(e){
-            console.log(e.response);
+            // console.log(e.response);
             dispatch({type:GET_USER_PROFILE_FAILED,payload:{error:e.response}});
 
         }

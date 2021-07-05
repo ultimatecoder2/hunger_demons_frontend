@@ -1,11 +1,11 @@
-import {record, authRecord} from '../apis/feed_needy';
-import {ADD_REQUEST, REQUEST_FAILED, DELETE_REQUEST, FETCH_DONATE_REQUEST, 
+import { authRecord} from '../apis/feed_needy';
+import {ADD_REQUEST, REQUEST_FAILED, FETCH_DONATE_REQUEST, 
     FETCH_NEED_REQUEST, DELETE_FOOD_REQUEST, DELETE_FOOD_REQUEST_FAILED} from './actionTypes'
 
 export const addRequest = (requestDetails) => async (dispatch,getState) =>{
     let token = getState().auth.token;
     try{
-        const response = await authRecord(token).post('/foodrequests', requestDetails);
+        await authRecord(token).post('/foodrequests', requestDetails);
         dispatch({type:ADD_REQUEST,payload:{msg:"Your request has been registered"}});
     }catch(e){
         dispatch({type:REQUEST_FAILED, payload:{error:"Your request can't be recorded. Please try again later."}})
