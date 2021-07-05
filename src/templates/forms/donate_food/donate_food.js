@@ -3,7 +3,7 @@ import React,{Component} from 'react';
 import {connect} from 'react-redux';
 import Select from 'react-select'
 import {toast, ToastContainer} from 'react-toastify';
-import { Country, State, City }  from 'country-state-city';
+import { State, City }  from 'country-state-city';
 import {Container, Row, Col} from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table'
@@ -14,7 +14,7 @@ import {BiNotepad} from 'react-icons/bi';
 //Manual imports
 import FormHeader from'../../header/form__header';
 import {foodTypes, foodOptions, countryList} from '../../../variables';
-import {addRequest} from '../../../actions/index';
+import {addRequest, getUserDetails} from '../../../actions/index';
 
 //css
 import 'react-toastify/dist/ReactToastify.css';
@@ -49,9 +49,32 @@ class DonateFood extends Component{
             }
         }
     }
+    componentDidMount = async()=>{
+        if(!this.props.userProfile){
+           await this.props.getUserDetails();
+        }
+        this.setInitialAddress();
+    }
 
     notifyFail = (message) => toast.error(message);
     notifySuccess = (message) => toast.success(message);
+
+    // set Initial state
+    setInitialAddress = ()=>{
+        if(this.props.userProfile){
+            let address = this.props.userProfile.address[0]
+            let {addressLine1, addressLine2, city, postalCode} = address;
+            let country_name = address.country;
+            let state_name = address.state;
+            let {state_code, country_code} = city;
+            let country = {label:country_name, value:country_name, country_code}
+            let addressState = {label: state_name, value: state_name, state_code}
+            this.setState({
+                addressLine1, addressLine2, country, addressState, city, postalCode
+            })
+            
+        }
+    }
 
     // input handlers
     handlefoodTypeChange = foodtype => {
@@ -217,6 +240,15 @@ class DonateFood extends Component{
     
     // button handlers
 
+    handleFoodReset = e=>{
+        e.preventDefault();
+        this.setState({
+            foodtype:"",
+            food_description:[]
+        })
+    }
+
+
     addFoodDescriptiton = (event)=>{
         event.preventDefault();
         const foodName = this.state.foodName.value;
@@ -340,6 +372,7 @@ class DonateFood extends Component{
                     <button className="btn" type="submit" onClick={this.showAddressForm}>
                         Next
                     </button>
+                    <button className="reset__form__button" style={{float:'right'}} onClick={this.handleFoodReset}> Reset Selection</button>
                 </div>
             </Form>
 
@@ -436,9 +469,10 @@ class DonateFood extends Component{
 const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
-        foodRequest: state.foodRequest
+        foodRequest: state.foodRequest,
+        userProfile: state.userProfile.profile
     })
 
 }
 
-export default connect(mapStateToProps,{addRequest})(DonateFood);
+export default connect(mapStateToProps,{addRequest, getUserDetails})(DonateFood);
