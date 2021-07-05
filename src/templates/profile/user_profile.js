@@ -1,31 +1,32 @@
 import React, { Component } from "react";
 import {connect} from 'react-redux'
 import validator from "validator";
-import { CountryDropdown, RegionDropdown} from 'react-country-region-selector';
-import { Link, useParams } from "react-router-dom";
 import {toast, ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Country, State, City }  from 'country-state-city';
+import { State, City }  from 'country-state-city';
 import Select from 'react-select'
-//Components/ files
-import './user_profile.css'
+
+//Components
 import userImg from '../../styles/img/profile.jpg';
 import FormHeader from'../header/form__header';
-import {renderCard} from '../requests/request_cards'
 import { countryList } from '../../variables';
-//Bootstrap
+import Loader from "../loader";
+
+// CSS/ Bootstrap
 import { Container, Row, Col, Image, Nav, NavItem, NavLink, Form} from "react-bootstrap";
 import {Modal, ModalHeader, ModalBody, ModalFooter} from "reactstrap";
+import 'react-toastify/dist/ReactToastify.css';
+import './user_profile.css'
+
 //Icons
-import { GrMail } from "react-icons/gr";
-import {FaBuilding} from "react-icons/fa";
-import { MdDescription } from "react-icons/md";
 import {AiOutlineMail} from 'react-icons/ai';
+import {FaBuilding, FaAddressCard, FaCity, FaGlobeAmericas, FaMapMarkedAlt, FaUserAlt} from 'react-icons/fa';
 import {FiPhoneCall} from 'react-icons/fi';
-import {FaAddressCard,FaCity,FaGlobeAmericas,FaMapMarkedAlt,FaUserAlt} from 'react-icons/fa';
-import {RiLockPasswordFill} from 'react-icons/ri';
 import {GiMailbox} from 'react-icons/gi';
-// apis
+import { GrMail } from "react-icons/gr";
+import { MdDescription } from "react-icons/md";
+import {RiLockPasswordFill} from 'react-icons/ri';
+
+// Apis
 import { updateProfile, updateAddress, fetchProfile} from "../../actions/index";
 import UserDonations from './user_donations'
 import UserNeed from './user_need'
@@ -38,7 +39,7 @@ class Profile extends Component {
 			showNeed:false,
             profileModalOpen:false,
             addressModalOpen:false,
-            userId:"",
+            profileId:"",
             profile:"",
             username: "",
             email:"",
@@ -68,47 +69,26 @@ class Profile extends Component {
     }
 
     componentDidMount = async()=>{
-		const authId= this.props.match.params.userId;
-        await this.props.fetchProfile(authId);
-        this.setState({
-            loaded:true,
-            userId:authId
-        });
+        this.setProfileId();
     }
-    
-	activateNeed = (e)=>{
-		e.preventDefault();
-		this.setState({
-			showNeed:true,
-			showDonations:false
-		})
-	}
-	activateDonation = (e)=>{
-		e.preventDefault();
-		this.setState({
-			showNeed:false,
-			showDonations:true
-		})
-	}
-	renderDonations = ()=>{
-		return <UserDonations owner={this.state.userId}/>
-	}
-	renderNeed = ()=>{
-		return(
-			<>
-                <UserNeed owner={this.state.userId}/>
-			</>
-		)
-	}
 
-    handleInputChange= (event)=>{
-        const target = event.target;
-        const name = target.name;
-        this.setState({
-          [name]: event.target.value
-        });
+    componentDidUpdate = async()=>{
+        if(this.state.profileId!=="" && this.state.profileId!== this.props.match.params.userId){
+            this.setProfileId();
+        }
     }
-    
+
+    setProfileId = async()=>{
+        let profileId= this.props.match.params.userId;
+        this.setState({
+            profileId
+        }, this.fetchUserProfileData);
+    }
+
+    notifyFail = (message) => toast.error(message);
+    notifySuccess = (message) => toast.success(message);
+
+    // reset state
     changeProfileModalState=(e)=>{
         if(e)
 		    e.preventDefault();
@@ -121,6 +101,7 @@ class Profile extends Component {
             image:""
 		})
 	}
+
     changeAddressModalState=(e)=>{
         if(e)
 		    e.preventDefault();
@@ -134,6 +115,19 @@ class Profile extends Component {
             country:""
 		})
 	}
+    
+    
+    // Input handlers
+
+    handleInputChange= (event)=>{
+        const target = event.target;
+        const name = target.name;
+        this.setState({
+          [name]: event.target.value
+        });
+    }
+    
+    
     handleImageUpload = (e)=>{
 		e.preventDefault();
         const image = e.target.files[0];
@@ -164,6 +158,7 @@ class Profile extends Component {
         }	
 		
 	}
+
     handleCountryChange = value=>{
         let states = State.getStatesOfCountry(value.country_code);
         let newStateList = []
@@ -179,6 +174,7 @@ class Profile extends Component {
             city:""
         })
     }
+
     handleAddressStateChange = value =>{
         let cities = City.getCitiesOfState(value.country_code, value.state_code);
         let newCityList = [];
@@ -200,6 +196,9 @@ class Profile extends Component {
 
     }
 
+    
+    //input validators 
+    
     userProfileValidation = (data)=>{
         const {username,email,password,contact,image} = data;
         let error=false, emailError="", passwordError="", usernameError="", imageError="", contactError="";
@@ -240,9 +239,16 @@ class Profile extends Component {
         }))
         return !error;
     }
-    notifyFail = (message) => toast.error(message);
-    notifySuccess = (message) => toast.success(message);
+
+    isValidAddress = (address)=>{
+        const {city, state, country} = address;
+        if(city&&state&&country) return true;
+        if(city||state||country) return false;
+        return true;
+    }
     
+    
+    // On Click handlers
 
     handleProfileUpdate = async(e)=>{
         e.preventDefault();
@@ -260,17 +266,13 @@ class Profile extends Component {
             await this.props.updateProfile(userDetails);
             if(this.props.user_form_updates.message){
                 this.notifySuccess(this.props.user_form_updates.message);
+                this.fetchUserProfileData();
             }else if(this.props.user_form_updates.error){
                 this.notifyFail(this.props.user_form_updates.error);
             }
         }
     }
-    isValidAddress = (address)=>{
-        const {city, state, country} = address;
-        if(city&&state&&country) return true;
-        if(city||state||country) return false;
-        return true;
-    }
+    
 
     handleAddressUpdate = async(e)=>{
         e.preventDefault();
@@ -308,12 +310,54 @@ class Profile extends Component {
             await this.props.updateAddress(address);
             if(this.props.user_form_updates.message){
                 this.notifySuccess(this.props.user_form_updates.message);
+                this.fetchUserProfileData();
             }else if(this.props.user_form_updates.error){
                 this.notifyFail(this.props.user_form_updates.error);
             }
         }
 
     }
+
+    
+    //multipage request type selection
+
+	activateNeed = (e)=>{
+		e.preventDefault();
+		this.setState({
+			showNeed:true,
+			showDonations:false
+		})
+	}
+	
+    activateDonation = (e)=>{
+		e.preventDefault();
+		this.setState({
+			showNeed:false,
+			showDonations:true
+		})
+	}
+    
+    // api's
+    fetchUserProfileData = async()=>{
+        await this.props.fetchProfile(this.state.profileId);
+        this.setState({loaded: true})
+    }
+
+
+    //rendering
+
+	renderDonations = ()=>{
+		return <UserDonations owner={this.state.profileId}/>
+	}
+
+	renderNeed = ()=>{
+		return(
+			<>
+                <UserNeed owner={this.state.profileId}/>
+			</>
+		)
+	}
+
     renderUpdateProfileModal = ()=>{
 		return(
 			<Modal isOpen={this.state.profileModalOpen} 
@@ -442,87 +486,111 @@ class Profile extends Component {
 		)
 
     }
-	
-    render() {
-        if(this.state.loaded){
+
+    renderUserDetails = () =>{
+        if(this.props.person__Profile.data){
             const userDetails = this.props.person__Profile.data;
             const userAddress = this.props.person__Profile.data.address[0];
+            return(
+                <div className="profile__header--container">
+                    <div className="profile__image">
+                        <Image src={userImg} className="user__profile__pic" roundedCircle/>
+                    </div>
+
+                    <div className="profile__details">
+                        <div>
+                            <h2 className="details--user__name">{userDetails.name}</h2>
+                        </div>
+                        
+                        <div>
+                            <p><span className="profile__header--icon"><FaBuilding/></span>
+                                {userAddress.addressLine1}, {userAddress.addressLine2},<br/>
+                                {userAddress.city.value}, {userAddress.state}, {userAddress.postalCode}, {userAddress.country}
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <p><span className="profile__header--icon"><GrMail/></span>{userDetails.email}</p>
+                        </div>
+                        <br/>
+                        {this.props.auth.userId === this.state.profileId &&
+                            <div>
+                                <button className="user__btn userbtn--1 mr-3" onClick={this.changeProfileModalState}>Update Profile</button>
+                                <button className="user__btn userbtn--2" onClick={this.changeAddressModalState}>Update Address</button>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            )
+        }else{
+            return(
+                <div>
+                    <Loader/>
+                </div>
+            )
+        }
+    }
+	
+    render() {
+        
+        
+        if(this.state.loaded){
             return (
                 <div>
                     <FormHeader/>
                     <ToastContainer/>
                     {this.state.profileModalOpen&&this.renderUpdateProfileModal()}
                     {this.state.addressModalOpen&&this.renderUpdateAddressModal()}
-                <div className="forms__section--food">
-                    <Container>
-                        <div className="form__heading">
-                            <h2>Profile</h2>
-                        </div>
-                        <div className="profile__header">
-                            <div className="profile__header--container">
-                                <div className="profile__image">
-                                    <Image src={userImg} className="user__profile__pic" roundedCircle/>
-                                </div>
-
-                                <div className="profile__details">
-                                    <div>
-                                        <h2 className="details--user__name">{userDetails.name}</h2>
-                                    </div>
-                                    <div>
-                                        <p><span className="profile__header--icon"><FaBuilding/></span>
-                                            {userAddress.addressLine1}, {userAddress.addressLine2},<br/>
-                                            {userAddress.city.value}, {userAddress.state}, {userAddress.postalCode}, {userAddress.country}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p><span className="profile__header--icon"><GrMail/></span>{userDetails.email}</p>
-                                    </div>
-                                    <br/>
-                                    <div>
-                                        <button className="user__btn userbtn--1 mr-3" onClick={this.changeProfileModalState}>Update Profile</button>
-                                        <button className="user__btn userbtn--2" onClick={this.changeAddressModalState}>Update Address</button>
-                                    </div>
-                                </div>
-
+                    <div className="forms__section--food">
+                        <Container>
+                            <div className="form__heading">
+                                <h2>Profile</h2>
                             </div>
-                        </div>
-                        <div className="profile__header other__header--nav">
-                            <Nav className='col-12' tabs="true">  
-                                <NavItem className='notification__filters'>
-                                    <NavLink active={this.state.showDonations} onClick={this.activateDonation}>Donate Requests</NavLink>
-                                </NavItem>
-                                <NavItem className='notification__filters'>
-                                <NavLink active={this.state.showNeed} onClick={this.activateNeed}>Need Requests</NavLink>
-                                </NavItem>
-                            </Nav>
-                        </div>
-                        
-                        <div className="profile__section--request_content">
-                            {this.state.showDonations&& this.renderDonations()}
-                            {this.state.showNeed&& this.renderNeed()}
-                        </div>
-                    </Container>
+                            <div className="profile__header">
+                                {this.renderUserDetails()}
+                            </div>
+                            <div className="profile__header other__header--nav">
+                                <Nav className='col-12' tabs="true">  
+                                    <NavItem className='notification__filters'>
+                                        <NavLink active={this.state.showDonations} onClick={this.activateDonation}>Donate Requests</NavLink>
+                                    </NavItem>
+                                    <NavItem className='notification__filters'>
+                                    <NavLink active={this.state.showNeed} onClick={this.activateNeed}>Need Requests</NavLink>
+                                    </NavItem>
+                                </Nav>
+                            </div>
+                            
+                            <div className="profile__section--request_content">
+                                {this.state.showDonations&& this.renderDonations()}
+                                {this.state.showNeed&& this.renderNeed()}
+                            </div>
+                        </Container>
+                    </div>
                 </div>
-            </div>
             )
         }
         else{
             return(
                 <div>
                     <FormHeader/>
-                    <div>
-                        Loading...........
+                    <div className="forms__section--food">
+                        <Container>
+                            <Loader/>
+                        </Container>
                     </div>
                 </div>
             )
         }
-}
+    }
+
 }
 const mapStateToProps = (state, ownProps)=>{
     return({
         ...ownProps,
         user_form_updates:state.user_form_updates,
-        person__Profile:state.profile
+        person__Profile:state.profile,
+        auth: state.auth
     })
 
 }
