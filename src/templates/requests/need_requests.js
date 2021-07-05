@@ -1,18 +1,26 @@
+// library imports
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
-import FormHeader from'../header/form__header';
 import {Container, Row, Col,Form} from 'react-bootstrap';
-import './pickup.css';
-import {renderCard} from './request_cards.js'
 import {toast, ToastContainer} from 'react-toastify';
-import {foodTypes} from '../../variables';
-import {fetchRequests, deleteFoodRequest, getUserDetails} from '../../actions/index'
-import FloatingLabelInput from 'react-floating-label-input';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {GiKnifeFork, GiMailbox} from 'react-icons/gi';
 import Select from 'react-select';
 import { State, City }  from 'country-state-city';
 import {FaCity, FaMapMarkedAlt} from 'react-icons/fa';
+import {GiKnifeFork, GiMailbox} from 'react-icons/gi';
+
+//manual imports
+import FormHeader from'../header/form__header';
+import {renderCard} from './request_cards.js'
+import {foodTypes} from '../../variables';
+import Loader from '../loader';
+//api endpoints
+import {fetchRequests, deleteFoodRequest, getUserDetails} from '../../actions/index'
+
+//css
+import './pickup.css';
+
+
 
 class NeedRequest extends Component {
     constructor(props){
@@ -21,6 +29,7 @@ class NeedRequest extends Component {
             foodtype:"",
             userCity:"",
             userState:"",
+            foodTypeFilter:"",
             cityList:[],
             stateList:[],
             city:"",
@@ -103,9 +112,9 @@ class NeedRequest extends Component {
     
 
     //Form Input handlers
-    
-    handleMultiSelectChange = foodtype => {
-        this.setState({ foodtype });
+
+    handlefoodTypeChange = foodtype => {
+        this.setState({ foodTypeFilter: foodtype });
     }
 
     handleInputChange = (event)=>{
@@ -181,11 +190,11 @@ class NeedRequest extends Component {
             return posts.map((post,  key)=>{
                 return renderCard({post,val:key, authId:this.props.auth.userId, deleteFoodRequest: (id)=>this.deleteFoodPost(id)})
             })
-        }else{
+        }else if(!this.state.hasMore){
             return(
                 <h3>No request exist at your location</h3>
             )
-        }
+        }else return;
         
     }
 
@@ -246,7 +255,7 @@ class NeedRequest extends Component {
                                 dataLength={this.state.data.length}
                                 next = {this.fetchData}
                                 hasMore = {this.state.hasMore}
-                                loader={<h4>Loading........</h4>}
+                                loader={<Loader/>}
                                 endMessage={<></>}
                                 className="flex flex-wrap scroll_div_outer"
                             >
